@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* ---- react-inner-image-zoom: force contain + full height ----
+.iiz {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .iiz__img {
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: contain !important;
+  }
+  
+  .iiz__zoom-img {
+    object-fit: contain !important;
+  } */

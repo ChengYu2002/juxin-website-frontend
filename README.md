@@ -1,16 +1,84 @@
-# React + Vite
+# Juxin Manufacturing Website – Frontend (V1)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for the Juxin Manufacturing independent website (V1).
 
-Currently, two official plugins are available:
+This V1 focuses on building a realistic product browsing and inquiry flow, with clean component separation and extensibility for future backend integration.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Tech Stack
+- React
+- Vite
+- React Router
+- Axios
+- ESLint + Prettier
+- tailwindcss
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features (V1)
+- Product listing page with category-based filtering
+- Product detail pages with variant (e.g. color) selection
+- Interactive product gallery:
+  - Image carousel with navigation controls
+  - Thumbnail gallery and image index indicator
+  - Desktop hover zoom and mobile full-screen preview
+- Inquiry workflow with product context:
+  - Inquiry form is pre-filled with selected product and variant information
+- Responsive navigation bar
+- Minimum viable content structure for a real B2B product website
+- Mock data support to enable rapid front-end development before backend integration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Project Structure
+```txt
+src/
+  app/            # App entry, router, providers
+  pages/          # Page-level components
+  components/     # Reusable UI components
+  services/       # API service layer
+  hooks/          # Custom React hooks
+  data/           # Mock data (V1)
+  assets/         # Images and icons
+  styles/         # Global styles
+
+---
+### Project Files
+src/
+  app/
+    App.jsx
+    router.jsx
+    providers.jsx
+  pages/
+    Home.jsx
+    Products.jsx
+    Product.jsx
+    About.jsx
+    Contact.jsx
+    NotFound.jsx
+  components/
+    Header.jsx
+    Footer.jsx
+    ProductCard.jsx
+    ProductGrid.jsx
+    FilterBar.jsx
+    InquiryForm.jsx
+  services/
+    http.js
+    products.js
+    inquiry.js
+  hooks/
+    useProducts.js
+    useDebounce.js
+  data/
+    products.mock.js
+    categories.mock.js
+    company.mock.js
+  assets/
+    images/
+    icons/
+  styles/
+    globals.css
+  utils/
+    format.js
