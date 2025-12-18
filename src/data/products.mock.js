@@ -77,6 +77,71 @@ const products = [
           },
         
     },
+    {
+      id: 'jx-A2D',
+      name: 'JX-A2D',
+    
+      // 用于 Products 页分类
+      category: "shopping-trolley",
+    
+      // 业务字段
+      moq: 1000,
+      priceRange: 'USD 3.2', // 如果你后面有精确报价可替换
+    
+      variants: [
+        {
+          key: "rose_pink",
+          label: "Rose Pink",
+          images: [
+            "/images/JX_A2D/rose_pink/1.jpg",
+            "/images/JX_A2D/rose_pink/2.jpg",
+            "/images/JX_A2D/rose_pink/3.jpg",
+            "/images/JX_A2D/rose_pink/4.jpg"
+          ],
+        },
+        {
+          key: "burgundy_floral",
+          label: "Burgundy Floral",
+          images: [
+            "/images/JX_A2D/burgundy_floral/1.jpg",
+            "/images/JX_A2D/burgundy_floral/2.jpg",
+            "/images/JX_A2D/burgundy_floral/3.jpg",
+            "/images/JX_A2D/burgundy_floral/4.jpg"
+          ],
+        },
+        {
+          key: "sky_blue_floral",
+          label: "Sky Blue Floral",
+          images: [
+            "/images/JX_A2D/sky_blue_floral/1.jpg",
+            "/images/JX_A2D/sky_blue_floral/2.jpg",
+            "/images/JX_A2D/sky_blue_floral/3.jpg",
+            "/images/JX_A2D/sky_blue_floral/4.jpg",
+          ],
+        },
+        {
+          key: "coffee_polka_dot",
+          label: "Coffee Polka Dot",
+          images: [
+            "/images/JX_A2D/coffee_polka_dot/1.jpg",
+            "/images/JX_A2D/coffee_polka_dot/2.jpg",
+            "/images/JX_A2D/coffee_polka_dot/3.jpg",
+            "/images/JX_A2D/coffee_polka_dot/4.jpg",
+          ],
+        },
+      ],
+    
+      specs: {
+        productSize: "34 x 29 x 96 cm",
+        cartonSize: "92 x 36 x 32 cm / 10 pcs",
+        netWeight: "16 kg",
+        grossWeight: "17 kg",
+        wheelSize: "160 mm",
+        containerCapacity: "20GP: 2500 / 40GP: 5100 / 40HQ: 6100",
+      },
+    },
+
+
 
   ];
   
