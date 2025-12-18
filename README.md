@@ -28,6 +28,7 @@ This V1 focuses on building a realistic product browsing and inquiry flow, with 
 - Responsive navigation bar
 - Minimum viable content structure for a real B2B product website
 - Mock data support to enable rapid front-end development before backend integration
+- Recommondation
 
 ---
 
@@ -43,42 +44,3 @@ src/
   assets/         # Images and icons
   styles/         # Global styles
 
----
-### Project Files
-src/
-  app/
-    App.jsx
-    router.jsx
-    providers.jsx
-  pages/
-    Home.jsx
-    Products.jsx
-    Product.jsx
-    About.jsx
-    Contact.jsx
-    NotFound.jsx
-  components/
-    Header.jsx
-    Footer.jsx
-    ProductCard.jsx
-    ProductGrid.jsx
-    FilterBar.jsx
-    InquiryForm.jsx
-  services/
-    http.js
-    products.js
-    inquiry.js
-  hooks/
-    useProducts.js
-    useDebounce.js
-  data/
-    products.mock.js
-    categories.mock.js
-    company.mock.js
-  assets/
-    images/
-    icons/
-  styles/
-    globals.css
-  utils/
-    format.js

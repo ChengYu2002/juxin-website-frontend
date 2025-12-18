@@ -7,6 +7,7 @@ import VariantSelector from '../components/VariantSelector';
 import ProductGallery from '../components/ProductGallery';
 import ProductActions from "../components/ProductActions";
 import ProductSpecs from '../components/ProductSpecs';
+import ProductRecommendations from '../components/ProductRecommendations';
 
 export default function Product() {
   const { id } = useParams();
@@ -61,9 +62,6 @@ export default function Product() {
           </h1>
           {/* 产品信息 */}
           <div className="mt-3 text-lg text-gray-800">
-            <span className="font-medium">Price:</span> {product.priceRange}
-          </div>
-          <div className="mt-3 text-lg text-gray-800">
             <span className="font-medium">MOQ:</span> {product.moq} pcs
           </div>
           <div className="mt-3 text-lg text-gray-800">
@@ -75,7 +73,14 @@ export default function Product() {
           {/* 规格信息 */}
           <ProductSpecs specs={product.specs} />
         </aside>
+        
       </div>
+
+       {/* 推荐产品部分 */}
+       <ProductRecommendations 
+        currentProductId={product.id}
+        allProducts={products}
+      />
         
     </main>
   );
