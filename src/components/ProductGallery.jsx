@@ -1,7 +1,7 @@
 // src/components/ProductGallery.jsx
-import { useState, useEffect } from "react";
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
+import { useState, useEffect } from 'react'
+import Lightbox from 'yet-another-react-lightbox'
+import 'yet-another-react-lightbox/styles.css'
 
 /**
  * ProductGallery
@@ -10,28 +10,28 @@ import "yet-another-react-lightbox/styles.css";
  * - 支持左右切换、圆点指示、图片计数
  */
 export default function ProductGallery({ images = [] }) {
-    // 当前选中该变体下第几张图
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  // 当前选中该变体下第几张图
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   // 当图片数组变化（切换颜色）时，重置到第一张
   useEffect(() => {
-    setSelectedImageIndex(0);
-  }, [images]);
+    setSelectedImageIndex(0)
+  }, [images])
 
   if (!images || images.length === 0) {
     return (
       <div className="flex h-96 w-full items-center justify-center rounded-lg border bg-white text-gray-500">
         No image available
       </div>
-    );
+    )
   }
 
   // 如果 length=5：
   // 0→1→2→3→4→0 循环
   const nextImage = () => {
-    setSelectedImageIndex((prev) => (prev + 1) % images.length);
-  };
+    setSelectedImageIndex((prev) => (prev + 1) % images.length)
+  }
 
   // 向前切换图片（环形轮播）
   // 逻辑说明：
@@ -39,8 +39,8 @@ export default function ProductGallery({ images = [] }) {
   // 2. + length        → 当 prev === 0 时，避免索引变成 -1
   // 3. % length        → 将索引限制在 [0, length - 1] 范围内，实现首尾循环
   const prevImage = () => {
-    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length)
+  }
 
   return (
     <>
@@ -86,8 +86,8 @@ export default function ProductGallery({ images = [] }) {
                   aria-label={`Go to image ${index + 1}`}
                   className={`h-2 w-2 rounded-full ${
                     index === selectedImageIndex
-                      ? "bg-blue-500"
-                      : "bg-gray-300"
+                      ? 'bg-blue-500'
+                      : 'bg-gray-300'
                   }`}
                 />
               ))}
@@ -127,8 +127,8 @@ export default function ProductGallery({ images = [] }) {
                 onClick={() => setSelectedImageIndex(index)}
                 className={`aspect-square overflow-hidden rounded border p-1 ${
                   index === selectedImageIndex
-                    ? "border-blue-500 ring-2 ring-blue-300"
-                    : "border-gray-300 hover:border-gray-400"
+                    ? 'border-blue-500 ring-2 ring-blue-300'
+                    : 'border-gray-300 hover:border-gray-400'
                 }`}
               >
                 <img
@@ -142,5 +142,5 @@ export default function ProductGallery({ images = [] }) {
         </div>
       )}
     </>
-  );
+  )
 }

@@ -1,7 +1,7 @@
 // src/components/Footer.jsx
-import { MapPin, Phone, Printer, Smartphone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Printer, Smartphone, Mail, Clock } from 'lucide-react'
 
-function Item({ icon: Icon, label, children }) {
+function Item({ label, children }) {
   return (
     <div className="flex gap-3">
       <div className="mt-0.5 shrink-0 text-white/70">
@@ -12,7 +12,7 @@ function Item({ icon: Icon, label, children }) {
         <div className="text-neutral-200 leading-relaxed">{children}</div>
       </div>
     </div>
-  );
+  )
 }
 
 export default function Footer() {
@@ -122,5 +122,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }
