@@ -13,7 +13,7 @@ export default function ProductSpecs({ specs }) {
                   <td className="py-2 font-medium capitalize">
                     {key.replaceAll('_', ' ')}:
                   </td>
-                  <td className="py-2 text-gray-700">{value}</td>
+                  <td className="py-2 text-gray-700 whitespace-pre-line">{value}</td>
                 </tr>
               ))}
             </tbody>

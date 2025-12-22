@@ -44,7 +44,7 @@ export default function Contact() {
       - Product: ${productName}${productId ? ` (${productId})` : ""}
       - Variant: ${variant || "N/A"}
 
-      Please share your quotation (price, lead time, packing, and shipping terms).
+      Please share your quotation (price, lead time, packing, customization and shipping terms).
 
       Thanks.`;
 
@@ -212,7 +212,7 @@ export default function Contact() {
             className={`w-full rounded-md border px-3 py-2 ${
               visibleValidation.message ? "border-red-300" : "border-gray-300"
             }`}
-            placeholder="Tell us what product you need, quantity, destination port, etc."
+            placeholder="Tell us what product you need, quantity, customization, destination port, etc."
           />
           {visibleValidation.message && (
             <p className="mt-1 text-xs text-red-600">{visibleValidation.message}</p>
