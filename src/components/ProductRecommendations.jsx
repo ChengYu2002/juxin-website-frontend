@@ -62,7 +62,7 @@ export default function ProductRecommendations({ currentProductId, allProducts }
   if (recommendations.length === 0) return null;
 
   return (
-    <section className="pt-24">
+    <section className="pt-24 mb-24">
       <div className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-800">
           Recommended Products

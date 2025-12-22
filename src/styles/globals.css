@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 26s linear infinite;
+}
+
+
+
 /* ---- react-inner-image-zoom: force contain + full height ----
 .iiz {
     height: 100%;
@@ -12,7 +23,7 @@
   .iiz__img {
     height: 100% !important;
     width: 100% !important;
-    object-fit: contain !important;
+    object-fit: contain !important; 
   }
   
   .iiz__zoom-img {
