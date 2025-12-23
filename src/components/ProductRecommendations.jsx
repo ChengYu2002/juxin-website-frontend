@@ -1,5 +1,5 @@
 // src/components/ProductRecommendations.jsx
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import ProductCard from './ProductCard'
 
 // 权重计算函数
@@ -34,21 +34,19 @@ const calculateProductScore = (product, currentProduct) => {
 }
 
 export default function ProductRecommendations({ currentProductId, allProducts }) {
-  const [recommendations, setRecommendations] = useState([])
-
-  useEffect(() => {
+  const recommendations = useMemo(() => {
     // 1. 找到当前产品
     const currentProduct = allProducts.find(p => p.id === currentProductId)
-    if (!currentProduct) return
+    if (!currentProduct) return []
 
     // 2. 使用权重逻辑计算分数并排序
     const scoredProducts = allProducts
-    // 排除当前产品和无变体产品
+      // 排除当前产品和无变体产品
       .filter(p =>
         p.id !== currentProductId &&
         p.variants?.length > 0
       )
-    // 计算分数
+      // 计算分数
       .map(product => ({
         ...product,
         score: calculateProductScore(product, currentProduct)
@@ -56,7 +54,7 @@ export default function ProductRecommendations({ currentProductId, allProducts }
       .sort((a, b) => b.score - a.score) // 按分数降序
       .slice(0, 4) // 取前4个
 
-    setRecommendations(scoredProducts)
+    return scoredProducts
   }, [currentProductId, allProducts])
 
   if (recommendations.length === 0) return null
@@ -105,7 +103,7 @@ export default function ProductRecommendations({ currentProductId, allProducts }
         ))}
       </div>
 
-      {/* 权重说明（可选，可注释掉） */}
+      {/* 权重说明（注释掉） */}
       {/* <div className="mt-8 rounded-lg bg-gray-50 p-4">
         <h3 className="text-sm font-medium text-gray-700">Recommendation Criteria:</h3>
         <div className="mt-2 grid grid-cols-3 gap-4 text-xs text-gray-600">

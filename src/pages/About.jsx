@@ -176,8 +176,16 @@ export default function About() {
                 title="Factory"
                 // hint="Use a bright, clean line photo. No clutter."
               />
-              <ImageCard title="International exhibition" />
-              <ImageCard title="Container Loading" />
+              <ImageCard
+                image="/images/about/exhibition.jpg"
+                title="INTERNATIONAL Exhibition"
+              />
+
+              <ImageCard
+                image="/images/about/container_loading.png"
+                title="Container Loading"
+              />
+
             </div>
           </div>
         </Container>

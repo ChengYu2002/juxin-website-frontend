@@ -1,7 +1,9 @@
 // src/components/Footer.jsx
 import { MapPin, Phone, Printer, Smartphone, Mail, Clock } from 'lucide-react'
 
-function Item({ label, children }) {
+function Item(props) {
+  const { icon: Icon, label, children } = props
+
   return (
     <div className="flex gap-3">
       <div className="mt-0.5 shrink-0 text-white/70">

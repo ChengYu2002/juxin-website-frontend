@@ -7,8 +7,6 @@ import { submitInquiry } from '../services/inquiryService'
 const COMPANY_EMAIL = 'sale01@cn-jason.net'
 const SUBJECT_PREFIX = 'Inquiry from Juxin Website'
 
-
-
 function isValidEmail(v) {
   // email 校验（v1）
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())
@@ -30,7 +28,6 @@ export default function Contact() {
   // ✅ 保存最近一次提交内容：用于 reset 后仍能生成 mailto 草稿
   const [lastSubmitted, setLastSubmitted] = useState(null)
 
-
   // 处理网址params 预填 message
   const [searchParams] = useSearchParams()
   const productId = searchParams.get('productId') ?? ''
@@ -40,6 +37,9 @@ export default function Contact() {
   // 初始化：把产品信息写进 message（只在参数变化时触发）
   useEffect(() => {
     if (!productId && !productName) return
+
+    // ✅ 防止覆盖用户已输入内容：只有 message 为空时才自动填模板
+    if (message.input.value?.trim()) return
 
     const template = `Hi Juxin Team,
 
@@ -54,8 +54,7 @@ export default function Contact() {
     message.input.onChange({
       target: { value: template },
     })
-
-  }, [productId, productName, variant])
+  }, [productId, productName, variant, message.input])
 
   const values = {
     name: name.input.value ?? '',
@@ -63,7 +62,7 @@ export default function Contact() {
     message: message.input.value ?? '',
   }
 
-  const actualValidation= useMemo(() => {
+  const actualValidation = useMemo(() => {
     const errs = {}
     if (!values.name.trim()) errs.name = 'Please enter your name.'
     if (!values.email.trim()) errs.email = 'Please enter your email.'
@@ -98,7 +97,7 @@ export default function Contact() {
   }, [values.name, values.email, values.message])
 
   // ✅ mailto 用“当前输入”优先；如果已成功提交且 reset 了，用 lastSubmitted 兜底
-  const mailtoPayload = lastSubmitted ?? values
+  const _mailtoPayload = lastSubmitted ?? values
   // ??: nullish coalescing operator，取前者非 null/undefined 的值，否则取后者
 
   // 生成 mailto 链接:
@@ -138,9 +137,8 @@ export default function Contact() {
     const payload = { ...values }
 
     try {
-
       // v1.5：fetch/axios 提交到后端 API
-      const response = await submitInquiry(payload)
+      const _response = await submitInquiry(payload)
 
       // ✅ 关键：reset 前保存一次（否则 reset 后 values 为空）
       setLastSubmitted(payload)
@@ -157,9 +155,9 @@ export default function Contact() {
       setStatus('error')
       // 给一个更“可用”的错误提示
       const msg =
-      err?.message?.includes('Failed to fetch')
-        ? 'Cannot reach our server (backend not running?). Please try again later or email us directly.'
-        : 'Something went wrong. Please try again or email us directly.'
+        err?.message?.includes('Failed to fetch')
+          ? 'Cannot reach our server (backend not running?). Please try again later or email us directly.'
+          : 'Something went wrong. Please try again or email us directly.'
 
       setError(msg)
     }
@@ -168,9 +166,7 @@ export default function Contact() {
   return (
     <main className="mx-auto max-w-xl p-6">
       <h1 className="mb-2 text-2xl font-semibold">Contact Us</h1>
-      <p className="mb-6 text-sm text-gray-600">
-        Send us an inquiry.
-      </p>
+      <p className="mb-6 text-sm text-gray-600">Send us an inquiry.</p>
 
       {/* 状态条 */}
       {status === 'success' && (
@@ -253,7 +249,6 @@ export default function Contact() {
             Open Email Draft
           </a>
           {/* 这里用一个 <a> 标签，点击后会打开用户的邮箱客户端，并预填邮件内容   */}
-
         </div>
 
         <p className="pt-2 text-xs text-gray-500">
