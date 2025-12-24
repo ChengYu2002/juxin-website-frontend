@@ -11,7 +11,20 @@ export async function submitInquiry({ name, email, message }) {
   })
 
   if (!res.ok) {
-    const errorData = await res.json()
-    throw new Error(errorData.error || 'Failed to submit inquiry')
+    let errorMessage = 'Failed to submit inquiry'
+    try {
+      const errorData = await res.json()
+      if (errorData?.error) {
+        errorMessage = errorData.error
+      }
+    } catch {
+      // ignore JSON parse errors
+    }
+
+    const error = new Error(errorMessage)
+    error.status = res.status
+    throw error
   }
+
+  return await res.json()
 }

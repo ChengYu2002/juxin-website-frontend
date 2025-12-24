@@ -154,10 +154,13 @@ export default function Contact() {
     } catch (err) {
       setStatus('error')
       // 给一个更“可用”的错误提示
-      const msg =
-        err?.message?.includes('Failed to fetch')
-          ? 'Cannot reach our server (backend not running?). Please try again later or email us directly.'
-          : 'Something went wrong. Please try again or email us directly.'
+      let msg = 'Something went wrong. Please try again or email us directly.'
+
+      if (err?.status === 429) {
+        msg = 'We\'ve already received your message. Please avoid submitting again and allow us some time to respond.'
+      } else if (err?.message?.includes('Failed to fetch')) {
+        msg = 'Cannot reach our server right now. Please try again later or email us directly.'
+      }
 
       setError(msg)
     }
@@ -181,6 +184,10 @@ export default function Contact() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* 蜜罐字段：company, 人看不到，机器人常会填 */}
+        <input name="company" className="hidden" tabIndex={-1} autoComplete="off" />
+
+        {/* input: name */}
         <div>
           <label className="block text-sm font-medium">Name</label>
           <input
@@ -195,6 +202,7 @@ export default function Contact() {
           )}
         </div>
 
+        {/* input: email */}
         <div>
           <label className="block text-sm font-medium">Email</label>
           <input
@@ -209,6 +217,7 @@ export default function Contact() {
           )}
         </div>
 
+        {/* input: message */}
         <div>
           <label className="block text-sm font-medium">Message</label>
           <textarea
