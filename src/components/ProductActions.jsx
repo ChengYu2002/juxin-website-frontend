@@ -1,23 +1,23 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom'
 
 export default function ProductActions({ product, selectedVariant }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleContact = () => {
     // 用 querystring 预填 Contact 页
     const params = new URLSearchParams({
       productId: product.id,
       productName: product.name,
-      variant: selectedVariant?.label ?? "",
-    });
+      variant: selectedVariant?.label ?? '',
+    })
 
-    navigate(`/contact?${params.toString()}`);
-  };
+    navigate(`/contact?${params.toString()}`)
+  }
 
   const handleDownload = () => {
     // V1：先占位（后面你可以改成 product.pdfUrl 或从后端拿）
-    alert("PDF not ready yet. (V1 placeholder)");
-  };
+    alert('PDF not ready yet. (V1 placeholder)')
+  }
 
   return (
     <div className="mt-5 flex gap-3">
@@ -37,5 +37,5 @@ export default function ProductActions({ product, selectedVariant }) {
         Download PDF
       </button>
     </div>
-  );
+  )
 }

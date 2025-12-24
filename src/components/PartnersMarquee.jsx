@@ -1,20 +1,20 @@
 // src/components/PartnersMarquee.jsx
-import { useMemo } from "react";
+import { useMemo } from 'react'
 
 export default function PartnersMarquee() {
   const partners = useMemo(
     () => [
-      { name: "ALDI", src: "/images/partners/aldi.svg", scale: 1.5 },
-      { name: "Carrefour", src: "/images/partners/carrefour.svg", scale: 1.5 },
-      { name: "Heineken", src: "/images/partners/heineken.svg", scale: 0.8 },
-      { name: "DAISO", src: "/images/partners/daiso.svg", scale: 0.8 },
-      { name: "Lee Kum Kee", src: "/images/partners/lee-kum-kee.svg", scale: 3 },
-      { name: "Woolworth", src: "/images/partners/woolworth.svg", scale: 2.2 },
+      { name: 'ALDI', src: '/images/partners/aldi.svg', scale: 1.5 },
+      { name: 'Carrefour', src: '/images/partners/carrefour.svg', scale: 1.5 },
+      { name: 'Heineken', src: '/images/partners/heineken.svg', scale: 0.8 },
+      { name: 'DAISO', src: '/images/partners/daiso.svg', scale: 0.8 },
+      { name: 'Lee Kum Kee', src: '/images/partners/lee-kum-kee.svg', scale: 3 },
+      { name: 'Woolworth', src: '/images/partners/woolworth.svg', scale: 2.2 },
     ],
     []
-  );
+  )
 
-  const track = [...partners, ...partners];
+  const track = [...partners, ...partners]
 
   return (
     <section className="w-full bg-white">
@@ -37,7 +37,7 @@ export default function PartnersMarquee() {
               {track.map((p, idx) => (
                 <div
                   key={`${p.name}-${idx}`}
-                    className="
+                  className="
                     flex items-center justify-center
                     h-32 sm:h-32
                     min-w-[200px] sm:min-w-[220px]
@@ -59,7 +59,7 @@ export default function PartnersMarquee() {
                       className="h-10 w-auto object-contain sm:h-14"
                       style={{
                         transform: `scale(${p.scale ?? 1})`,
-                        transformOrigin: "center",
+                        transformOrigin: 'center',
                       }}
                     />
                   </div>
@@ -75,5 +75,5 @@ export default function PartnersMarquee() {
         </div>
       </div>
     </section>
-  );
+  )
 }

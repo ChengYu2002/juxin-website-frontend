@@ -1,9 +1,9 @@
-//src/components/ProductCard.jsx    
-import { Link } from 'react-router-dom';
+//src/components/ProductCard.jsx
+import { Link } from 'react-router-dom'
 
 export default function ProductCard({ product }) {
   return (
-    <Link 
+    <Link
       to={`/products/${product.id}`}
       className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-lg transition-shadow duration-200"
     >
@@ -25,5 +25,5 @@ export default function ProductCard({ product }) {
         <div className="mx-auto mt-2 h-0.5 w-12 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
       </div>
     </Link>
-  );
+  )
 }

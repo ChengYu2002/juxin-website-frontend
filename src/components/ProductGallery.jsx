@@ -1,7 +1,7 @@
 // src/components/ProductGallery.jsx
-import { useState, useEffect } from "react";
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
+import { useState } from 'react'
+import Lightbox from 'yet-another-react-lightbox'
+import 'yet-another-react-lightbox/styles.css'
 
 /**
  * ProductGallery
@@ -10,28 +10,35 @@ import "yet-another-react-lightbox/styles.css";
  * - 支持左右切换、圆点指示、图片计数
  */
 export default function ProductGallery({ images = [] }) {
-    // 当前选中该变体下第几张图
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-
-  // 当图片数组变化（切换颜色）时，重置到第一张
-  useEffect(() => {
-    setSelectedImageIndex(0);
-  }, [images]);
+  // 当前选中该变体下第几张图
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   if (!images || images.length === 0) {
     return (
       <div className="flex h-96 w-full items-center justify-center rounded-lg border bg-white text-gray-500">
         No image available
       </div>
-    );
+    )
   }
+
+  // ✅ 当图片数组变化（切换颜色）时，不用 effect 重置 state
+  // 这里做“安全索引”：
+  // - 如果原来的 selectedImageIndex 超出新 images 的范围，就回到 0
+  // - 这样避免了 setState in effect，同时也不会出现 images[selectedImageIndex] 变成 undefined
+  const safeIndex =
+    selectedImageIndex >= 0 && selectedImageIndex < images.length
+      ? selectedImageIndex
+      : 0
 
   // 如果 length=5：
   // 0→1→2→3→4→0 循环
   const nextImage = () => {
-    setSelectedImageIndex((prev) => (prev + 1) % images.length);
-  };
+    setSelectedImageIndex((prev) => {
+      const base = prev >= 0 && prev < images.length ? prev : 0
+      return (base + 1) % images.length
+    })
+  }
 
   // 向前切换图片（环形轮播）
   // 逻辑说明：
@@ -39,16 +46,19 @@ export default function ProductGallery({ images = [] }) {
   // 2. + length        → 当 prev === 0 时，避免索引变成 -1
   // 3. % length        → 将索引限制在 [0, length - 1] 范围内，实现首尾循环
   const prevImage = () => {
-    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+    setSelectedImageIndex((prev) => {
+      const base = prev >= 0 && prev < images.length ? prev : 0
+      return (base - 1 + images.length) % images.length
+    })
+  }
 
   return (
     <>
       {/* ===== 主图区域 ===== */}
       <div className="relative mb-4 h-96 w-full overflow-hidden rounded-lg border bg-white">
         <img
-          src={images[selectedImageIndex]}
-          alt={`Product image ${selectedImageIndex + 1}`}
+          src={images[safeIndex]}
+          alt={`Product image ${safeIndex + 1}`}
           onClick={() => setLightboxOpen(true)}
           className="h-full w-full cursor-zoom-in object-contain"
         />
@@ -85,9 +95,7 @@ export default function ProductGallery({ images = [] }) {
                   onClick={() => setSelectedImageIndex(index)}
                   aria-label={`Go to image ${index + 1}`}
                   className={`h-2 w-2 rounded-full ${
-                    index === selectedImageIndex
-                      ? "bg-blue-500"
-                      : "bg-gray-300"
+                    index === safeIndex ? 'bg-blue-500' : 'bg-gray-300'
                   }`}
                 />
               ))}
@@ -95,7 +103,7 @@ export default function ProductGallery({ images = [] }) {
 
             {/* 图片计数 */}
             <div className="absolute right-4 top-4 rounded-full bg-black/50 px-3 py-1 text-sm text-white">
-              {selectedImageIndex + 1} / {images.length}
+              {safeIndex + 1} / {images.length}
             </div>
           </>
         )}
@@ -105,7 +113,7 @@ export default function ProductGallery({ images = [] }) {
       <Lightbox
         open={lightboxOpen}
         close={() => setLightboxOpen(false)}
-        index={selectedImageIndex}
+        index={safeIndex}
         slides={images.map((src, index) => ({
           src,
           alt: `Product image ${index + 1}`,
@@ -124,11 +132,12 @@ export default function ProductGallery({ images = [] }) {
             {images.map((img, index) => (
               <button
                 key={index}
+                type="button"
                 onClick={() => setSelectedImageIndex(index)}
                 className={`aspect-square overflow-hidden rounded border p-1 ${
-                  index === selectedImageIndex
-                    ? "border-blue-500 ring-2 ring-blue-300"
-                    : "border-gray-300 hover:border-gray-400"
+                  index === safeIndex
+                    ? 'border-blue-500 ring-2 ring-blue-300'
+                    : 'border-gray-300 hover:border-gray-400'
                 }`}
               >
                 <img
@@ -142,5 +151,5 @@ export default function ProductGallery({ images = [] }) {
         </div>
       )}
     </>
-  );
+  )
 }

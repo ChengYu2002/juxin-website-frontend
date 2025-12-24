@@ -1,21 +1,21 @@
 // src/components/Header.jsx
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const categories = [
-  { key: "shopping-trolley", label: "Shopping Trolley" },
-  { key: "utility-trolley", label: "Utility Trolley" },
-  { key: "camping-wagon", label: "Camping Wagon" },
-  { key: "outdoor-furniture", label: "Outdoor Furniture" },
-];
+  { key: 'shopping-trolley', label: 'Shopping Trolley' },
+  { key: 'utility-trolley', label: 'Utility Trolley' },
+  { key: 'camping-wagon', label: 'Camping Wagon' },
+  { key: 'outdoor-furniture', label: 'Outdoor Furniture' },
+]
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
 
   const itemBase =
-    "h-9 px-3 inline-flex items-center rounded-md text-sm font-semibold tracking-wide text-white/80 hover:text-white hover:bg-white/5 transition";
-  const itemActive = "bg-white/10 text-white";
+    'h-9 px-3 inline-flex items-center rounded-md text-sm font-semibold tracking-wide text-white/80 hover:text-white hover:bg-white/5 transition'
+  const itemActive = 'bg-white/10 text-white'
 
   return (
     <header className="relative z-50 bg-neutral-950 text-white">
@@ -26,11 +26,11 @@ export default function Header() {
 
         <nav className="flex items-center gap-2">
           {/* isActive：当前链接是否激活, 如果激活，style：itemBase + itemActive */}
-          <NavLink to="/" end className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ""}`}>
+          <NavLink to="/" end className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ''}`}>
             HOME
           </NavLink>
 
-          <NavLink to="/about" className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ""}`}>
+          <NavLink to="/about" className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ''}`}>
             ABOUT
           </NavLink>
 
@@ -43,7 +43,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className={`${itemBase} ${open ? itemActive : ""}`}
+              className={`${itemBase} ${open ? itemActive : ''}`}
             >
               PRODUCTS <span className="ml-1 text-white/60">▾</span>
               {/* 多加了span ▾ */}
@@ -84,11 +84,11 @@ export default function Header() {
             )}
           </div>
 
-          <NavLink to="/contact" className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ""}`}>
+          <NavLink to="/contact" className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ''}`}>
             CONTACT
           </NavLink>
         </nav>
       </div>
     </header>
-  );
+  )
 }

@@ -1,65 +1,63 @@
 // src/components/ProductRecommendations.jsx
-import { useState, useEffect } from 'react';
-import ProductCard from './ProductCard';
+import { useMemo } from 'react'
+import ProductCard from './ProductCard'
 
 // 权重计算函数
 const calculateProductScore = (product, currentProduct) => {
-  let score = 0;
-  
+  let score = 0
+
   // 1. 同类产品：40分（最高权重）
   if (product.category === currentProduct.category) {
-    score += 40;
+    score += 40
   }
-  
+
   // 2. 高利润产品：35分（B2B核心）
   if (product.profitMargin === 'high') {
-    score += 35;
+    score += 35
   } else if (product.profitMargin === 'medium') {
-    score += 20;
+    score += 20
   } else if (product.profitMargin === 'low') {
-    score += 5;
+    score += 5
   }
-  
+
   // 3. 流行品：25分（促进销售）
   if (product.isPopular) {
-    score += 25;
+    score += 25
   }
-  
+
   // 4. 附加分：同类中的流行品（额外加分）
   if (product.category === currentProduct.category && product.isPopular) {
-    score += 15;
+    score += 15
   }
-  
-  return score;
-};
+
+  return score
+}
 
 export default function ProductRecommendations({ currentProductId, allProducts }) {
-  const [recommendations, setRecommendations] = useState([]);
-  
-  useEffect(() => {
+  const recommendations = useMemo(() => {
     // 1. 找到当前产品
-    const currentProduct = allProducts.find(p => p.id === currentProductId);
-    if (!currentProduct) return;
-    
+    const currentProduct = allProducts.find(p => p.id === currentProductId)
+    if (!currentProduct) return []
+
     // 2. 使用权重逻辑计算分数并排序
     const scoredProducts = allProducts
-    // 排除当前产品和无变体产品
-      .filter(p => 
-        p.id !== currentProductId && 
+      // 排除当前产品和无变体产品
+      .filter(p =>
+        p.id !== currentProductId &&
         p.variants?.length > 0
       )
-    // 计算分数
+      // 计算分数
       .map(product => ({
         ...product,
         score: calculateProductScore(product, currentProduct)
       }))
       .sort((a, b) => b.score - a.score) // 按分数降序
-      .slice(0, 4); // 取前4个
-    
-    setRecommendations(scoredProducts);
-  }, [currentProductId, allProducts]);
+      .slice(0, 4) // 取前4个
 
-  if (recommendations.length === 0) return null;
+    return scoredProducts
+  }, [currentProductId, allProducts])
+
+  if (recommendations.length === 0) return null
 
   return (
     <section className="pt-24 mb-24">
@@ -71,7 +69,7 @@ export default function ProductRecommendations({ currentProductId, allProducts }
           Based on category, profitability, and popularity
         </p> */}
       </div>
-      
+
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
         {recommendations.map((product) => (
           <div key={product.id} className="relative">
@@ -79,10 +77,10 @@ export default function ProductRecommendations({ currentProductId, allProducts }
             <div className="absolute -top-2 -right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-lg">
               {product.score}
             </div> */}
-            
+
             {/* 产品卡片 */}
             <ProductCard product={product} />
-            
+
             {/* 推荐原因标签 */}
             {/* <div className="mt-2 flex flex-wrap gap-1">
               {product.category === allProducts.find(p => p.id === currentProductId)?.category && (
@@ -104,8 +102,8 @@ export default function ProductRecommendations({ currentProductId, allProducts }
           </div>
         ))}
       </div>
-      
-      {/* 权重说明（可选，可注释掉） */}
+
+      {/* 权重说明（注释掉） */}
       {/* <div className="mt-8 rounded-lg bg-gray-50 p-4">
         <h3 className="text-sm font-medium text-gray-700">Recommendation Criteria:</h3>
         <div className="mt-2 grid grid-cols-3 gap-4 text-xs text-gray-600">
@@ -124,5 +122,5 @@ export default function ProductRecommendations({ currentProductId, allProducts }
         </div>
       </div> */}
     </section>
-  );
+  )
 }

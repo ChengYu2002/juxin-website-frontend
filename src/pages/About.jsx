@@ -1,48 +1,48 @@
 // src/pages/About.jsx
-import { Link } from "react-router-dom";
-import PartnersMarquee from "../components/PartnersMarquee";
+import { Link } from 'react-router-dom'
+import PartnersMarquee from '../components/PartnersMarquee'
 
 const COMPANY = {
-  name: "JUXIN",
-  established: "2005",
-  location: "China",
+  name: 'JUXIN',
+  established: '2005',
+  location: 'China',
   exportCountries: 60,
-  primaryRegions: ["Europe", "South Korea", "Southeast Asia", "North America", "Russia"],
-  categories: ["Shopping Trolley", "Utility Cart", "Camping Wagon"],
-};
+  primaryRegions: ['Europe', 'South Korea', 'Southeast Asia', 'North America', 'Russia'],
+  categories: ['Shopping Trolley', 'Utility Cart', 'Camping Wagon'],
+}
 
 const WHAT_WE_DO = [
-  "Factory-direct trolley manufacturing",
-  "Retail-ready product solutions",
-  "OEM / ODM based on existing models",
-  "Export-oriented production",
-];
+  'Factory-direct trolley manufacturing',
+  'Retail-ready product solutions',
+  'OEM / ODM based on existing models',
+  'Export-oriented production',
+]
 
 const CAPABILITY = [
-  "Multiple trolley assembly lines",
-  "Container-level order support (20GP / 40HQ)",
-  "In-house assembly & packing",
-  "Export-oriented workflow and QC",
-  "Stable long-term manufacturing capacity",
-];
+  'Multiple trolley assembly lines',
+  'Container-level order support (20GP / 40HQ)',
+  'In-house assembly & packing',
+  'Export-oriented workflow and QC',
+  'Stable long-term manufacturing capacity',
+]
 
-const CLIENT_TYPES = ["Retailers", "Importers", "Wholesalers"];
+const CLIENT_TYPES = ['Retailers', 'Importers', 'Wholesalers']
 
 function Container({ children }) {
-  return <div className="mx-auto w-full max-w-6xl px-6 lg:px-8">{children}</div>;
+  return <div className="mx-auto w-full max-w-6xl px-6 lg:px-8">{children}</div>
 }
 
 function Kicker({ children, dark = false }) {
   return (
     <p
       className={[
-        "text-xs font-semibold tracking-[0.22em] uppercase",
-        dark ? "text-white/70" : "text-slate-500",
-      ].join(" ")}
+        'text-xs font-semibold tracking-[0.22em] uppercase',
+        dark ? 'text-white/70' : 'text-slate-500',
+      ].join(' ')}
     >
       {children}
     </p>
-  );
+  )
 }
 
 function SectionTitle({ kicker, title, desc, dark = false }) {
@@ -51,24 +51,24 @@ function SectionTitle({ kicker, title, desc, dark = false }) {
       {kicker ? <Kicker dark={dark}>{kicker}</Kicker> : null}
       <h2
         className={[
-          "mt-3 text-4xl font-semibold tracking-tight",
-          dark ? "text-white" : "text-slate-900",
-        ].join(" ")}
+          'mt-3 text-4xl font-semibold tracking-tight',
+          dark ? 'text-white' : 'text-slate-900',
+        ].join(' ')}
       >
         {title}
       </h2>
       {desc ? (
         <p
           className={[
-            "mt-4 text-sm leading-7",
-            dark ? "text-white/70" : "text-slate-600",
-          ].join(" ")}
+            'mt-4 text-sm leading-7',
+            dark ? 'text-white/70' : 'text-slate-600',
+          ].join(' ')}
         >
           {desc}
         </p>
       ) : null}
     </div>
-  );
+  )
 }
 
 function Pill({ children }) {
@@ -76,7 +76,7 @@ function Pill({ children }) {
     <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80">
       {children}
     </span>
-  );
+  )
 }
 
 function Stat({ label, value }) {
@@ -85,7 +85,7 @@ function Stat({ label, value }) {
       <p className="text-xs font-semibold tracking-[0.22em] uppercase text-slate-500">{label}</p>
       <p className="mt-2 text-2xl font-semibold text-slate-900">{value}</p>
     </div>
-  );
+  )
 }
 
 function FeatureBlock({ title, desc }) {
@@ -96,7 +96,7 @@ function FeatureBlock({ title, desc }) {
         {desc ? <p className="mt-2 text-sm leading-6 text-slate-600">{desc}</p> : null}
       </div>
     </div>
-  );
+  )
 }
 
 function ImageCard({ title, image }) {
@@ -119,7 +119,7 @@ function ImageCard({ title, image }) {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 export default function About() {
@@ -146,11 +146,11 @@ export default function About() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/70">
-              Exported to{" "}
+              Exported to{' '}
               <span className="font-semibold text-white">{COMPANY.exportCountries}+ countries</span>,
-              with strong coverage across{" "}
+              with strong coverage across{' '}
               <span className="font-semibold text-white">
-                {COMPANY.primaryRegions.join(" · ")}
+                {COMPANY.primaryRegions.join(' · ')}
               </span>
               .
             </p>
@@ -176,8 +176,16 @@ export default function About() {
                 title="Factory"
                 // hint="Use a bright, clean line photo. No clutter."
               />
-              <ImageCard title="International exhibition" />
-              <ImageCard title="Container Loading" />
+              <ImageCard
+                image="/images/about/exhibition.jpg"
+                title="INTERNATIONAL Exhibition"
+              />
+
+              <ImageCard
+                image="/images/about/container_loading.png"
+                title="Container Loading"
+              />
+
             </div>
           </div>
         </Container>
@@ -213,7 +221,7 @@ export default function About() {
                       Product coverage
                     </p>
                     <p className="mt-3 text-[18px] leading-7 text-slate-700">
-                      {COMPANY.categories.join(" / ")} 
+                      {COMPANY.categories.join(' / ')}
                     </p>
                     <p className="mt-3 text-[16px] leading-7 text-slate-700">
                       — Structured for retail operations and logistics. OEM/ODM support based on existing models and clear specs.
@@ -227,17 +235,17 @@ export default function About() {
                   <p className="text-[28px] font-semibold text-slate-900">Markets & client types</p>
 
                   <p className="mt-3 text-lg leading-7 text-slate-700">
-                    Export coverage:{" "}
+                    Export coverage:{' '}
                     <span className="font-semibold">{COMPANY.exportCountries}+ countries</span>
                   </p>
 
                   <p className="mt-2 text-lg leading-7 text-slate-700">
-                    Primary regions:{" "}
-                    <span className="font-semibold">{COMPANY.primaryRegions.join(" · ")}</span>
+                    Primary regions:{' '}
+                    <span className="font-semibold">{COMPANY.primaryRegions.join(' · ')}</span>
                   </p>
 
                   <p className="mt-2 text-lg leading-7 text-slate-700">
-                    Clients: <span className="font-semibold">{CLIENT_TYPES.join(" · ")}</span>
+                    Clients: <span className="font-semibold">{CLIENT_TYPES.join(' · ')}</span>
                   </p>
 
                   <p className="mt-3 text-lg leading-5 text-slate-600">
@@ -293,8 +301,8 @@ export default function About() {
                   Primary regions
                 </p>
                 <p className="mt-3 text-sm leading-7 text-slate-700">
-                  Strong coverage across{" "}
-                  <span className="font-semibold">{COMPANY.primaryRegions.join(" · ")}</span>.
+                  Strong coverage across{' '}
+                  <span className="font-semibold">{COMPANY.primaryRegions.join(' · ')}</span>.
                 </p>
               </div>
             </div>
@@ -363,7 +371,7 @@ export default function About() {
         </Container>
       </section>
 
-      
+
 
       {/* CTA */}
       <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-zinc-950">
@@ -406,5 +414,5 @@ export default function About() {
         </Container>
       </section>
     </main>
-  );
+  )
 }

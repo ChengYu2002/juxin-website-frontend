@@ -1,5 +1,5 @@
 // src/components/Hero.jsx
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
 export default function Hero() {
   return (
@@ -75,5 +75,5 @@ export default function Hero() {
         </div>
       </div>
     </section>
-  );
+  )
 }
