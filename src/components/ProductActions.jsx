@@ -14,28 +14,16 @@ export default function ProductActions({ product, selectedVariant }) {
     navigate(`/contact?${params.toString()}`)
   }
 
-  const handleDownload = () => {
-    // V1：先占位（后面你可以改成 product.pdfUrl 或从后端拿）
-    alert('PDF not ready yet. (V1 placeholder)')
-  }
-
   return (
     <div className="mt-5 flex gap-3">
       <button
         type="button"
         onClick={handleContact}
-        className="flex-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
+        className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition"
       >
         Contact for Quote
       </button>
 
-      <button
-        type="button"
-        onClick={handleDownload}
-        className="rounded-lg border px-4 py-3 text-sm font-semibold hover:bg-gray-50 transition"
-      >
-        Download PDF
-      </button>
     </div>
   )
 }
