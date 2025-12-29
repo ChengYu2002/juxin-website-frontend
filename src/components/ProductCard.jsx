@@ -1,28 +1,42 @@
-//src/components/ProductCard.jsx
+// src/components/ProductCard.jsx
 import { Link } from 'react-router-dom'
 
 export default function ProductCard({ product }) {
   return (
     <Link
       to={`/products/${product.id}`}
-      className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-lg transition-shadow duration-200"
+      className="group block rounded-xl border border-slate-200 bg-white
+                 p-3 sm:p-4
+                 transition hover:-translate-y-0.5 hover:shadow-md"
     >
-      {/* 图片容器：控制比例 */}
-      <div className="mb-3 h-56 w-full overflow-hidden rounded bg-white flex items-center justify-center">
+      {/* 图片容器：手机端更紧 */}
+      <div className="mb-3 sm:mb-4
+                      flex h-64 sm:h-72 w-full items-center justify-center
+                      overflow-hidden rounded-lg bg-white">
         <img
           src={product.variants[0].images[0]}
           alt={product.name}
-          className="max-h-full max-w-full object-contain p-4"
+          className="max-h-full max-w-full object-contain
+                     p-1.5 sm:p-2
+                     transition-transform duration-300
+                     group-hover:scale-[1.06]"
         />
       </div>
 
       {/* 产品名称 */}
-      <div className="relative">
-        <h3 className="text-center text-base font-semibold text-gray-800 tracking-wide">
+      <div className="text-center">
+        <h3 className="text-sm font-semibold tracking-wide text-slate-800">
           {product.name}
         </h3>
-        {/* 下划线动画 */}
-        <div className="mx-auto mt-2 h-0.5 w-12 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
+
+        {/* 极轻强调线 */}
+        <div
+          className="mx-auto mt-1.5 sm:mt-2
+                     h-0.5 w-10 rounded-full
+                     bg-slate-300 opacity-0
+                     transition-opacity duration-300
+                     group-hover:opacity-100"
+        />
       </div>
     </Link>
   )

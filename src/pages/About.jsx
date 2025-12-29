@@ -1,6 +1,7 @@
 // src/pages/About.jsx
 import { Link } from 'react-router-dom'
 import PartnersMarquee from '../components/PartnersMarquee'
+import Certifications from '../components/Certifications'
 
 const COMPANY = {
   name: 'JUXIN',
@@ -168,9 +169,9 @@ export default function About() {
       </section>
 
       {/* WHAT WE DO */}
-      <section className="bg-white">
+      <section className="bg-white py-8">
         <Container>
-          <div className="py-12 sm:py-16 lg:py-20">
+          <div>
             <SectionTitle title="What we do" />
 
             <div className="mt-8 sm:mt-12 grid gap-8 sm:gap-10 lg:grid-cols-12">
@@ -242,11 +243,15 @@ export default function About() {
       </section>
 
       {/* PARTNERS — 用 Container 统一左右边距 */}
-      <section className="bg-white">
-        <Container>
+      <section className="bg-white ">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <PartnersMarquee />
-        </Container>
+        </div>
       </section>
+
+
+      {/* CERTIFICATIONS */}
+      <Certifications />
 
       {/* SNAPSHOT */}
       <section className="bg-slate-100">
