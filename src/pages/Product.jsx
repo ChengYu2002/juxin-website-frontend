@@ -1,5 +1,5 @@
 // src/pages/Product.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import products from '../data/products.mock'
 
@@ -18,6 +18,11 @@ function ProductDetail({ product }) {
 
   // 获取当前选中的变体
   const selectedVariant = product?.variants?.[selectedVariantIndex]
+
+  // 初始化: 打开页面永远滚动到顶部
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [])
 
   return (
     <main className="mx-auto max-w-4xl px-5 py-8">

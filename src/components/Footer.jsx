@@ -84,31 +84,31 @@ export default function Footer() {
 
           <div className="grid grid-cols-3 gap-x-6 gap-y-5 items-center">
             <img
-              src="/images/certs/bsci.jpg"
+              src="/images/certs_footer/bsci.jpg"
               alt="BSCI"
               className="h-7 max-w-[140px] object-contain opacity-70 grayscale hover:opacity-95 hover:grayscale-0 transition"
             />
 
             <img
-              src="/images/certs/sgs.png"
+              src="/images/certs_footer/sgs.png"
               alt="SGS"
               className="h-7 max-w-[140px] object-contain opacity-70 grayscale hover:opacity-95 hover:grayscale-0 transition"
             />
 
             <img
-              src="/images/certs/ce.png"
+              src="/images/certs_footer/ce.png"
               alt="CE"
               className="h-7 max-w-[140px] object-contain opacity-70 invert hover:opacity-95 transition"
             />
 
             <img
-              src="/images/certs/iso.png"
+              src="/images/certs_footer/iso.png"
               alt="ISO 9001"
               className="h-7 max-w-[140px] object-contain opacity-70 grayscale hover:opacity-95 hover:grayscale-0 transition"
             />
 
             <img
-              src="/images/certs/wca.png"
+              src="/images/certs_footer/wca.png"
               alt="WCA"
               className="h-7 max-w-[140px] object-contain opacity-70 grayscale hover:opacity-95 hover:grayscale-0 transition"
             />

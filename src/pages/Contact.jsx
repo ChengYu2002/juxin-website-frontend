@@ -34,6 +34,11 @@ export default function Contact() {
   const productName = searchParams.get('productName') ?? ''
   const variant = searchParams.get('variant') ?? ''
 
+  // 初始化: 打开页面永远滚动到顶部
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [])
+
   // 初始化：把产品信息写进 message（只在参数变化时触发）
   useEffect(() => {
     if (!productId && !productName) return

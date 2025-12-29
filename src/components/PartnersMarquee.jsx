@@ -52,7 +52,7 @@ export default function PartnersMarquee() {
   return (
     <section className="w-full bg-white">
       <div className="mx-auto max-w-screen-2xl px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
-        <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+        <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-4xl">
           Our Partners & Customers
         </h2>
 
