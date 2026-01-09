@@ -11,7 +11,7 @@ export default function AdminInquiries() {
   const [filter, setFilter] = useState('time-desc') // 'time-desc' | 'time-asc' |'status-new' | 'status-done'
 
   // 分页
-  const PAGE_SIZE = 3
+  const PAGE_SIZE = 5  // 每页显示数量
   const [currentPage, setCurrentPage] = useState(1)
 
   // 加载询盘列表数据
@@ -28,7 +28,7 @@ export default function AdminInquiries() {
 
       setInquiries(list)
     } catch (err) {
-      setError(err.message || 'Failed to load inquiries 加载询盘失败')
+      setError(`${err.message} - 加载询盘失败` || '加载询盘失败')
     } finally {
       setLoading(false)
       // finally: 无论成功失败都会执行
@@ -66,7 +66,7 @@ export default function AdminInquiries() {
         )
       )
     } catch (err) {
-      alert(err.message || '更新询盘状态失败')
+      alert(`${err.message}\n 更新询盘状态失败` || '更新询盘状态失败')
     }
   }
 
@@ -91,9 +91,8 @@ export default function AdminInquiries() {
       //   )
       // )
 
-
     } catch (err) {
-      alert(err.message || '删除询盘失败')
+      alert( `${err.message} - 删除询盘失败'` || '删除询盘失败')
     }
   }
 

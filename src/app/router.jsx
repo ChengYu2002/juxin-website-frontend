@@ -13,6 +13,7 @@ import NotFound from '../pages/NotFound'
 import AdminLogin from '../admin/pages/Login'
 import AdminDashboard from '../admin/pages/Dashboard'
 import AdminProducts from '../admin/pages/Products'
+import AdminProductEdit from "../admin/pages/ProductEdit" 
 import AdminInquiries from '../admin/pages/Inquiries'
 import AdminProtected from '../admin/AdminProtected'
 import AdminLayout from '../admin/AdminLayout'
@@ -35,6 +36,7 @@ export default function AppRouter() {
         <Route element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="products/:id" element={<AdminProductEdit />} />
           <Route path="inquiries" element={<AdminInquiries />} />
         </Route>
       </Route>
