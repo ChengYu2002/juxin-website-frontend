@@ -28,7 +28,8 @@ export default function AdminInquiries() {
 
       setInquiries(list)
     } catch (err) {
-      setError(`${err.message} - 加载询盘失败` || '加载询盘失败')
+      setError(err?.message ? `${err.message} - 加载询盘失败` : '加载询盘失败')
+
     } finally {
       setLoading(false)
       // finally: 无论成功失败都会执行
@@ -66,7 +67,7 @@ export default function AdminInquiries() {
         )
       )
     } catch (err) {
-      alert(`${err.message}\n 更新询盘状态失败` || '更新询盘状态失败')
+      alert(err?.message ? `${err.message}\n更新询盘状态失败` : '更新询盘状态失败')
     }
   }
 
@@ -92,7 +93,7 @@ export default function AdminInquiries() {
       // )
 
     } catch (err) {
-      alert( `${err.message} - 删除询盘失败'` || '删除询盘失败')
+      alert(err?.message ? `${err.message} - 删除询盘失败` : '删除询盘失败')
     }
   }
 

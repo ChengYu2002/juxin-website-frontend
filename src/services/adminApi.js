@@ -34,8 +34,18 @@ export async function adminFetch(url, options = {}) {
   */
 
   if (!res.ok) {
-    throw new Error(data.message || 'Admin request failed')
+    const err = new Error(
+      (data && data.error) ||
+        (data && data.message) ||
+        (typeof data === 'string' && data) ||
+        res.statusText ||
+        'Request failed'
+    )
+    err.status = res.status
+    err.data = data
+    throw err
   }
+
 
   return data
 }

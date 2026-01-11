@@ -1,5 +1,5 @@
 // src/pages/Contact.jsx
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useField } from '../hooks/useField'
 import { submitInquiry } from '../services/inquiryService'
@@ -15,12 +15,16 @@ function isValidEmail(v) {
 //string.trim(): 去除字符串「开头和结尾」的空白字符
 
 export default function Contact() {
+
   const name = useField('text')
   const email = useField('email')
   const message = useField('text')
 
   const [status, setStatus] = useState('idle') // idle | submitting | success | error
   const [error, setError] = useState('')
+
+  // useRef 的 .current 改变，不会触发组件重新渲染；
+  const prefillAppliedRef = useRef(false)
 
   // 记录是否提交过
   const [showValidation, setShowValidation] = useState(false)
@@ -43,6 +47,9 @@ export default function Contact() {
   useEffect(() => {
     if (!productId && !productName) return
 
+    // ✅ 已经预填过，就永远不再动 message
+    if (prefillAppliedRef.current) return
+
     // ✅ 防止覆盖用户已输入内容：只有 message 为空时才自动填模板
     if (message.input.value?.trim()) return
 
@@ -59,7 +66,12 @@ export default function Contact() {
     message.input.onChange({
       target: { value: template },
     })
-  }, [productId, productName, variant, message.input])
+
+    // ✅ 标记：已经做过一次预填
+    prefillAppliedRef.current = true
+
+    // ESlint 忽略 message.input warning
+  }, [productId, productName, variant])
 
   const values = {
     name: name.input.value ?? '',

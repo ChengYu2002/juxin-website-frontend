@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 // 筛选语义映射
 const FILTER_MAP = {
-  "create-time": { sort: 'default' }, // 继续用原先的 sortOrder + updatedAt
+  'create-time': { sort: 'default' }, // sortOrder + createAt
   active: { isActive: true },
   inactive: { isActive: false },
 
@@ -29,7 +29,7 @@ export default function AdminProducts() {
   const [filter, setFilter] = useState('create-time')
 
   // pagination
-  const PAGE_SIZE = 5
+  const PAGE_SIZE = 20
   const [currentPage, setCurrentPage] = useState(1)
 
   // ===== 拉取产品 =====
@@ -80,15 +80,15 @@ export default function AdminProducts() {
         return bSort - aSort
       }
 
-      // 次级排序：按时间降序 - update优先
-      const aTime = new Date(a.updatedAt || a.createdAt || 0).getTime()
-      const bTime = new Date(b.updatedAt || b.createdAt || 0).getTime()
+      // 次级排序：按时间降序 - create优先
+      const aTime = new Date(a.createdAt || a.updatedAt || 0).getTime()
+      const bTime = new Date(b.createdAt || b.updatedAt || 0).getTime()
 
       return bTime - aTime
     })
 
     return list
-    
+
   }, [products, filter])
 
   // filter 改变时：回到第 1 页
@@ -125,14 +125,14 @@ export default function AdminProducts() {
       await loadProducts()
 
     } catch (err) {
-      alert(`${err.message} - 更新产品状态失败` || '更新产品状态失败')
+      alert(err?.message ? `${err.message} - 更新产品状态失败` : '更新产品状态失败')
     }
   }
 
   // ===== 删除 =====
   const deleteProduct = async (product) => {
     const ok = window.confirm(
-      `确定要删除产品 "${product.name}" 吗？\n此操作不可撤销！`
+      `确定要删除产品 "${product.name}" 吗？\n此操作不可撤销 !`
     )
     if (!ok) return
 
@@ -144,19 +144,19 @@ export default function AdminProducts() {
 
       await loadProducts()
     } catch (err) {
-      alert(`${err.message} \n 删除产品失败` || '删除产品失败')
+      alert(err?.message ? `${err.message} \n 删除产品失败` : '删除产品失败')
     }
   }
 
   return (
     <>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-semibold">Products 产品管理</h2>
+        <h2 className="text-lg font-semibold">Products 产品管理</h2>
 
         <div className="flex items-center gap-2">
           {/* 新增产品按钮 */}
           <button
-            onClick={() => navigate('/admin/products')}
+            onClick={() => navigate('/admin/products-create')}
             className="text-sm px-4 py-2 rounded border border-indigo-300 text-indigo-600 hover:bg-indigo-50"
           >
             + 新增产品
@@ -211,52 +211,53 @@ export default function AdminProducts() {
         <>
           <ul className="space-y-2">
             {pagedProducts.map(p => {
-              const pid = getPid(p) // 
+              const pid = getPid(p) //
               return (
                 <li
-                  key={pid} 
-                  className={`border p-2 text-sm ${
+                  key={pid}
+                  className={`border rounded-lg p-4 text-base ${
                     !p.isActive ? 'bg-gray-50 text-gray-400' : ''
                   }`}
                 >
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-start gap-6">
                     {/* 左侧：核心信息 */}
-                    <div>
-                      <div className="font-medium">
+                    <div className="space-y-1">
+                      <div className="font-semibold text-base">
                         {p.name}
-                        <span className="ml-2 text-xs text-gray-400">
+                        <span className="ml-3 text-sm text-gray-500">
                           产品类型: {p.category}
                         </span>
                       </div>
 
-                      <div className="text-xs text-gray-400">
-                        slug: {p.slug} · sort: {p.sortOrder}
+                      <div className="text-sm text-gray-500">
+                        {/* slug: {p.slug} ·  */}
+                        排名权重 sort: {p.sortOrder}
                       </div>
                     </div>
 
                     {/* 右侧：操作 */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3 shrink-0">
                       <button
-                        onClick={() => navigate(`/admin/products/${pid}`)} // ✅ 跳转也统一 pid
-                        className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-100"
+                        onClick={() => navigate(`/admin/products/${pid}`)}
+                        className="text-sm px-3 py-1.5 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
                       >
                         编辑 ⚙️
                       </button>
 
                       <button
                         onClick={() => toggleActive(p)}
-                        className={`text-xs px-2 py-1 rounded border ${
+                        className={`text-sm px-3 py-1.5 rounded-md border ${
                           p.isActive
                             ? 'border-blue-500 text-blue-600 hover:bg-blue-100'
                             : 'border-gray-300 text-gray-500 hover:bg-gray-100'
                         }`}
                       >
-                        {p.isActive ? '下架 ' : '上架'}
+                        {p.isActive ? '下架' : '上架'}
                       </button>
 
                       <button
                         onClick={() => deleteProduct(p)}
-                        className="text-xs px-2 py-1 rounded border border-red-500 text-red-600 hover:bg-red-50"
+                        className="text-sm px-3 py-1.5 rounded-md border border-red-500 text-red-600 hover:bg-red-50"
                       >
                         删除
                       </button>

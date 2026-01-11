@@ -1,7 +1,7 @@
 // src/pages/Product.jsx
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import products from '../data/products.mock'
+// import products from '../data/products.mock'
 
 import VariantSelector from '../components/VariantSelector'
 import ProductGallery from '../components/ProductGallery'
@@ -63,15 +63,83 @@ function ProductDetail({ product }) {
       </div>
 
       {/* 推荐产品部分 */}
-      <ProductRecommendations currentProductId={product.id} allProducts={products} />
+      {/* <ProductRecommendations currentProductId={product.id} allProducts={products} /> */}
     </main>
   )
 }
 
 export default function Product() {
   const { id } = useParams()
-  const product = products.find((p) => p.id === id)
+  const productId = String(id || '').trim().toLowerCase()
+  // const product = products.find((p) => p.id === id)
 
+  const [product, setProduct] = useState(null)
+  // const [allProducts, setAllProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+
+  // if (!product) {
+  //   return (
+  //     <main className="mx-auto max-w-4xl px-5 py-8">
+  //       <h2 className="text-lg font-semibold">Product not found</h2>
+  //     </main>
+  //   )
+  // }
+
+  // 反正产品抖动
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      setError('')
+      try {
+        // 单个产品数据加载
+        const res = await fetch(`/api/products/${encodeURIComponent(productId)}`)
+        if (!res.ok) {
+          let msg = 'Failed to load product'
+          try {
+            const errData = await res.json()
+            msg = errData?.message || msg
+          } catch {
+            // ignore
+          }
+          throw new Error(msg)
+        }
+        const data = await res.json()
+        setProduct(data)
+      } catch (e) {
+        setError(e?.message || 'Failed to load product')
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+
+  }, [productId])
+
+  // 加载状态
+  if (loading) {
+    return (
+      <main className="mx-auto max-w-4xl px-5 py-8">
+        <div className="rounded border bg-white p-4 text-sm text-gray-600">
+          Loading product...
+        </div>
+      </main>
+    )
+  }
+
+  // 错误状态
+  if (error) {
+    return (
+      <main className="mx-auto max-w-4xl px-5 py-8">
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </div>
+      </main>
+    )
+  }
+
+  // 未找到产品
   if (!product) {
     return (
       <main className="mx-auto max-w-4xl px-5 py-8">
