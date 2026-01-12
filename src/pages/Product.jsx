@@ -63,7 +63,7 @@ function ProductDetail({ product }) {
       </div>
 
       {/* 推荐产品部分 */}
-      {/* <ProductRecommendations currentProductId={product.id} allProducts={products} /> */}
+      <ProductRecommendations currentProductId={product.id} />
     </main>
   )
 }

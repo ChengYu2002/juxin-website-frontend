@@ -11,6 +11,10 @@ export default function Products() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // pagination
+  const PAGE_SIZE = 16
+  const [currentPage, setCurrentPage] = useState(1)
+
   // 初始化: 打开页面永远滚动到顶部
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
@@ -57,6 +61,27 @@ export default function Products() {
     loadProducts()
   }, [category])
 
+  // filter 改变时：回到第 1 页
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [category])
+
+  // ===== 分页 =====
+  const displayProducts = products 
+  const totalPages = Math.ceil(displayProducts.length / PAGE_SIZE)
+
+  const pagedProducts = displayProducts.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  )
+
+  // ===== currentPage 超出 totalPages 时，调整 currentPage =====
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages || 1)
+    }
+  }, [totalPages, currentPage])
+
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
       <h1 className="mb-6 text-2xl font-bold">
@@ -87,7 +112,7 @@ export default function Products() {
       {/* List */}
       {!loading && !error && products.length > 0 && (
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-          {products.map((p) => (
+          {pagedProducts.map((p) => (
             <ProductCard
               key={p.id || p._id || p.slug}
               product={p}
@@ -95,6 +120,35 @@ export default function Products() {
           ))}
         </div>
       )}
-    </main>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-10 flex items-center justify-center gap-5 text-sm text-gray-600">
+          <button
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="rounded-full border px-3 py-1 transition
+                      hover:bg-gray-100 disabled:opacity-30"
+          >
+            ←
+          </button>
+
+          <span>
+            Page <span className="font-medium text-gray-800">{currentPage}</span>
+            <span className="mx-1 text-gray-400">/</span>
+            {totalPages}
+          </span>
+
+          <button
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="rounded-full border px-3 py-1 transition
+                      hover:bg-gray-100 disabled:opacity-30"
+          >
+            →
+          </button>
+        </div>
+      )}
+    </main> 
   )
 }

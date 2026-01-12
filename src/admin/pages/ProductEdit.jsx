@@ -171,7 +171,7 @@ export default function ProductEdit() {
       const idNormalized = String(product.id || '')
         .trim()
         .toLowerCase()
-        .replace(/\s+/g, '')
+        .replace(/[^a-z0-9-_]/g, '')
 
       const payload = {
         id: idNormalized,
@@ -200,7 +200,7 @@ export default function ProductEdit() {
           key: String(v.code || '')
             .trim()
             .toLowerCase()
-            .replace(/\s+/g, ''),
+            .replace(/[^a-z0-9-_]/g, ''),
 
           label: String(v.label || '').trim(),
 

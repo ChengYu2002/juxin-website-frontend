@@ -8,6 +8,7 @@ import Product from '../pages/Product'
 import About from '../pages/About'
 import Contact from '../pages/Contact'
 import NotFound from '../pages/NotFound'
+import ProductsLayout from '../layouts/ProductsLayout'
 
 // admin pages
 import AdminLogin from '../admin/pages/Login'
@@ -24,10 +25,12 @@ export default function AppRouter() {
     <Routes>
       {/* ===== Public ===== */}
       <Route path="/" element={<Home />} />
-      <Route path="/products" element={<Products />} />
       <Route path="/products/:id" element={<Product />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/products" element={<ProductsLayout />}>
+        <Route index element={<Products />} />
+      </Route>
 
       {/* ===== Admin Login（不需要保护） ===== */}
       <Route path="/admin/login" element={<AdminLogin />} />

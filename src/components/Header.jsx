@@ -31,7 +31,8 @@ export default function Header() {
     const mm = (q) => window.matchMedia && window.matchMedia(q).matches
     const coarse = mm('(pointer: coarse)')
     const noHover = mm('(hover: none)')
-    const touchPoints = typeof navigator !== 'undefined' && (navigator.maxTouchPoints || 0) > 0
+    const touchPoints =
+      typeof navigator !== 'undefined' && (navigator.maxTouchPoints || 0) > 0
     return coarse || noHover || touchPoints
   }, [])
 
@@ -79,11 +80,13 @@ export default function Header() {
   // ===== Desktop hover close timer =====
   const desktopHoverCloseTimerRef = useRef(null)
   const openDesktopMenu = () => {
-    if (desktopHoverCloseTimerRef.current) clearTimeout(desktopHoverCloseTimerRef.current)
+    if (desktopHoverCloseTimerRef.current)
+      clearTimeout(desktopHoverCloseTimerRef.current)
     setDesktopProductsOpen(true)
   }
   const scheduleCloseDesktopMenu = () => {
-    if (desktopHoverCloseTimerRef.current) clearTimeout(desktopHoverCloseTimerRef.current)
+    if (desktopHoverCloseTimerRef.current)
+      clearTimeout(desktopHoverCloseTimerRef.current)
     desktopHoverCloseTimerRef.current = setTimeout(() => {
       setDesktopProductsOpen(false)
     }, 180)
@@ -105,7 +108,8 @@ export default function Header() {
   // Cleanup desktop hover timer on unmount
   useEffect(() => {
     return () => {
-      if (desktopHoverCloseTimerRef.current) clearTimeout(desktopHoverCloseTimerRef.current)
+      if (desktopHoverCloseTimerRef.current)
+        clearTimeout(desktopHoverCloseTimerRef.current)
       if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
     }
   }, [])
@@ -150,7 +154,9 @@ export default function Header() {
           <NavLink
             to="/"
             end
-            className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ''}`}
+            className={({ isActive }) =>
+              `${itemBase} ${isActive ? itemActive : ''}`
+            }
             onClick={() => setDesktopProductsOpen(false)}
           >
             HOME
@@ -158,24 +164,22 @@ export default function Header() {
 
           <NavLink
             to="/about"
-            className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ''}`}
+            className={({ isActive }) =>
+              `${itemBase} ${isActive ? itemActive : ''}`
+            }
             onClick={() => setDesktopProductsOpen(false)}
           >
             ABOUT
           </NavLink>
 
           {/* PRODUCTS dropdown */}
-          <div
-            ref={desktopWrapRef}
-            className="relative"
-            // hover only when device truly supports hover
-            onMouseEnter={canHover ? openDesktopMenu : undefined}
-            onMouseLeave={canHover ? scheduleCloseDesktopMenu : undefined}
-          >
+          <div ref={desktopWrapRef} className="relative">
             <button
               type="button"
               onClick={handleProductsButtonClick}
-              className={`${itemBase} ${desktopProductsOpen ? itemActive : ''}`}
+              className={`${itemBase} ${
+                desktopProductsOpen ? itemActive : ''
+              }`}
               aria-expanded={desktopProductsOpen}
               aria-haspopup="menu"
             >
@@ -184,8 +188,6 @@ export default function Header() {
 
             {desktopProductsOpen && (
               <div
-                onMouseEnter={canHover ? openDesktopMenu : undefined}
-                onMouseLeave={canHover ? scheduleCloseDesktopMenu : undefined}
                 className="
                   absolute top-full mt-3
                   left-1/2 -translate-x-1/2
@@ -210,7 +212,11 @@ export default function Header() {
                           key={c.key}
                           type="button"
                           onClick={() => {
-                            navigate(`/products?category=${encodeURIComponent(c.key)}`)
+                            navigate(
+                              `/products?category=${encodeURIComponent(
+                                c.key,
+                              )}`,
+                            )
                             setDesktopProductsOpen(false)
                           }}
                           className="
@@ -236,7 +242,9 @@ export default function Header() {
 
           <NavLink
             to="/contact"
-            className={({ isActive }) => `${itemBase} ${isActive ? itemActive : ''}`}
+            className={({ isActive }) =>
+              `${itemBase} ${isActive ? itemActive : ''}`
+            }
             onClick={() => setDesktopProductsOpen(false)}
           >
             CONTACT
@@ -291,7 +299,9 @@ export default function Header() {
           {/* panel */}
           <div
             className={`fixed right-0 top-0 h-full w-[82%] max-w-[360px] bg-neutral-950 border-l border-white/10 shadow-2xl
-              transition-transform ease-out ${mobileShown ? 'translate-x-0' : 'translate-x-full'}`}
+              transition-transform ease-out ${
+                mobileShown ? 'translate-x-0' : 'translate-x-full'
+              }`}
             style={{ transitionDuration: `${ANIM_MS}ms` }}
           >
             <div className="p-4">
@@ -315,7 +325,9 @@ export default function Header() {
                   end
                   onClick={closeMobile}
                   className={({ isActive }) =>
-                    `w-full justify-start ${itemBase} ${isActive ? itemActive : ''}`
+                    `w-full justify-start ${itemBase} ${
+                      isActive ? itemActive : ''
+                    }`
                   }
                 >
                   HOME
@@ -325,7 +337,9 @@ export default function Header() {
                   to="/about"
                   onClick={closeMobile}
                   className={({ isActive }) =>
-                    `w-full justify-start ${itemBase} ${isActive ? itemActive : ''}`
+                    `w-full justify-start ${itemBase} ${
+                      isActive ? itemActive : ''
+                    }`
                   }
                 >
                   ABOUT
@@ -334,10 +348,15 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setMobileProductsOpen((v) => !v)}
-                  className={`w-full justify-between ${itemBase} ${mobileProductsOpen ? itemActive : ''}`}
+                  className={`w-full justify-between ${itemBase} ${
+                    mobileProductsOpen ? itemActive : ''
+                  }`}
                 >
                   <span className="inline-flex items-center">
-                    PRODUCTS <span className="ml-2 text-white/60">{mobileProductsOpen ? '▴' : '▾'}</span>
+                    PRODUCTS{' '}
+                    <span className="ml-2 text-white/60">
+                      {mobileProductsOpen ? '▴' : '▾'}
+                    </span>
                   </span>
                 </button>
 
@@ -360,7 +379,9 @@ export default function Header() {
                   to="/contact"
                   onClick={closeMobile}
                   className={({ isActive }) =>
-                    `w-full justify-start ${itemBase} ${isActive ? itemActive : ''}`
+                    `w-full justify-start ${itemBase} ${
+                      isActive ? itemActive : ''
+                    }`
                   }
                 >
                   CONTACT

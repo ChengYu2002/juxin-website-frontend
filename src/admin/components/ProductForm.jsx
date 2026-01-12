@@ -28,14 +28,17 @@ export default function ProductForm({
           {isCreateMode ? (
             <label className="space-y-1">
               <div className="text-sm text-gray-700">
-                Product ID (产品ID - 小写，不能有空格） 创建后不可更改
+                Product ID (产品ID - 英文，小写，不能有空格） 创建后不可更改
               </div>
               <input
                 className="w-full border rounded p-2 text-sm"
                 value={product.id ?? ''}
                 onChange={(e) => {
-                  // 强制小写 + 去掉空格（避免后续路由/查询大小写问题）
-                  const v = e.target.value.toLowerCase().replace(/\s+/g, '')
+                  // 强制小写 + 去掉空格 + 强制英文字母数字（避免后续路由/查询大小写问题）
+                  const v = e.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-_]/g, '')
+
                   setField('id', v)
                 }}
                 placeholder="e.g. jx-l5"
@@ -99,7 +102,7 @@ export default function ProductForm({
 
           <label className="space-y-1">
             <div className="text-sm text-gray-700">
-              Sort Order (越大产品展示越靠前)
+              Sort Order (数值越大，产品展示优先级越高，可用于首页或重点推荐展示)
             </div>
             <input
               className="w-full border rounded p-2 text-sm"
@@ -152,9 +155,14 @@ export default function ProductForm({
       {/* ===== Specs ===== */}
       <div className="border rounded p-4 space-y-4">
         <div className="font-semibold">详情信息 Specs</div>
-        <div className="text-sm text-gray-500">
-          属性填写请以产品适用性为准，非所有字段均为必填。
-          例如：户外家具不适用 wheelSize 字段。
+        <div className="text-sm text-gray-500 space-y-1">
+          <div>
+            请根据产品实际适用属性填写，非所有字段均为必填;
+            例如：户外家具类产品无需填写 wheelSize。
+          </div>
+          <div>
+            填写完成后，请前往前台产品展示页面检查展示效果与排版是否正常。
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="space-y-1">
@@ -288,14 +296,14 @@ export default function ProductForm({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <label className="space-y-1">
-                  <div className="text-sm text-gray-700">Key 小写 无空格</div>
+                  <div className="text-sm text-gray-700">Key 英文 小写 无空格</div>
                   <input
                     className="w-full border rounded p-2 text-sm"
                     value={v.code || ''}
                     onChange={(e) => {
                       const v2 = e.target.value
                         .toLowerCase()
-                        .replace(/\s+/g, '')
+                        .replace(/[^a-z0-9-_]/g, '')
                       updateVariantField(idx, { code: v2 })
                     }}
                     placeholder="e.g. rose_pink"
