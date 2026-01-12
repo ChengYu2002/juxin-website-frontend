@@ -2,7 +2,7 @@
 // const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 export async function submitInquiry({ name, email, message }) {
-  const res = await fetch('/api/inquiry', {
+  const res = await fetch('/api/inquiries', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
