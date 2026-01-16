@@ -8,7 +8,7 @@ const calculateProductScore = (product, currentProduct) => {
 
   // 1. 同类产品：40分（最高权重）
   if (product.category === currentProduct.category) {
-    score += 40
+    score += 45
   }
 
   // 2. 高利润产品：35分（B2B核心）
@@ -27,7 +27,7 @@ const calculateProductScore = (product, currentProduct) => {
 
   // 4. 附加分：同类中的流行品（额外加分）
   if (product.category === currentProduct.category && product.isPopular) {
-    score += 15
+    score += 10
   }
 
   return score
@@ -47,7 +47,7 @@ export default function ProductRecommendations({ currentProductId }) {
       setError('')
 
       try {
-        const res = await fetch(`/api/products`)
+        const res = await fetch('/api/products')
 
         // 先尽量把后端错误信息读出来（如果有）
         if (!res.ok) {
@@ -148,7 +148,7 @@ export default function ProductRecommendations({ currentProductId }) {
         {recommendations.map((product) => (
           <div key={getProductId(product)} className="relative">
             {/* 分数标签（调试用） */}
-            {/* 
+            {/*
             <div className="absolute -top-2 -right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-lg">
               {product.score}
             </div>

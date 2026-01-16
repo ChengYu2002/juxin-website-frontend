@@ -119,7 +119,7 @@ export default function AdminProducts() {
     try {
       await adminFetch(`/api/products/admin/${pid}`, {
         method: 'PUT',
-        body: JSON.stringify({ isActive: next }),
+        body: { isActive: next },
       })
 
       await loadProducts()

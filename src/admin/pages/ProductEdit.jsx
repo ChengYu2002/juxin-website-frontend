@@ -214,7 +214,7 @@ export default function ProductEdit() {
 
       await adminFetch(`/api/products/admin/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(payload),
+        body: payload,
       })
 
       setNotice('产品保存成功 🎉')

@@ -36,11 +36,6 @@ export default function Header() {
     return coarse || noHover || touchPoints
   }, [])
 
-  const canHover = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    const mm = (q) => window.matchMedia && window.matchMedia(q).matches
-    return mm('(hover: hover)') && mm('(pointer: fine)')
-  }, [])
 
   // ===== Derived mount flag (IMPORTANT) =====
   // Keep mounted while open OR during closing animation
@@ -79,18 +74,6 @@ export default function Header() {
 
   // ===== Desktop hover close timer =====
   const desktopHoverCloseTimerRef = useRef(null)
-  const openDesktopMenu = () => {
-    if (desktopHoverCloseTimerRef.current)
-      clearTimeout(desktopHoverCloseTimerRef.current)
-    setDesktopProductsOpen(true)
-  }
-  const scheduleCloseDesktopMenu = () => {
-    if (desktopHoverCloseTimerRef.current)
-      clearTimeout(desktopHoverCloseTimerRef.current)
-    desktopHoverCloseTimerRef.current = setTimeout(() => {
-      setDesktopProductsOpen(false)
-    }, 180)
-  }
 
   // Close desktop dropdown when clicking outside
   const desktopWrapRef = useRef(null)
@@ -300,8 +283,8 @@ export default function Header() {
           <div
             className={`fixed right-0 top-0 h-full w-[82%] max-w-[360px] bg-neutral-950 border-l border-white/10 shadow-2xl
               transition-transform ease-out ${
-                mobileShown ? 'translate-x-0' : 'translate-x-full'
-              }`}
+        mobileShown ? 'translate-x-0' : 'translate-x-full'
+        }`}
             style={{ transitionDuration: `${ANIM_MS}ms` }}
           >
             <div className="p-4">
