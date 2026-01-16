@@ -98,7 +98,7 @@ export default function Footer() {
             <img
               src="/images/certs_footer/ce.png"
               alt="CE"
-              className="h-7 max-w-[140px] object-contain opacity-70 invert hover:opacity-95 transition"
+              className="h-7 max-w-[140px] object-contain grayscale opacity-65 hover:opacity-95 transition"
             />
 
             <img

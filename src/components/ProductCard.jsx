@@ -1,8 +1,6 @@
 // src/components/ProductCard.jsx
 import { Link } from 'react-router-dom'
 
-
-
 export default function ProductCard({ product }) {
   const mainImage = product?.variants?.[0]?.images?.[0]
 
