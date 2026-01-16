@@ -10,34 +10,36 @@ export default function AdminDashboard() {
   const [err, setErr] = useState('')
 
   useEffect(() => {
-    let alive = true
+    const aliveRef = { current: true }
 
     ;(async () => {
       try {
         setLoading(true)
         setErr('')
 
-        // ✅ 按你现有的 admin 接口改：
         const [ps, ins] = await Promise.all([
-          adminFetch('api/products/admin'),
-          adminFetch('api/inquiries/admin'),
+          adminFetch('/api/products/admin'),
+          adminFetch('/api/inquiries/admin'),
         ])
 
-        if (!alive) return
-        setProducts(Array.isArray(ps) ? ps : ps?.items ?? [])
-        setInquiries(Array.isArray(ins) ? ins : ins?.items ?? [])
+        if (aliveRef.current) {
+          setProducts(Array.isArray(ps) ? ps : ps?.items ?? [])
+          setInquiries(Array.isArray(ins) ? ins : ps?.items ?? [])
+        }
       } catch (e) {
         console.error(e)
-        if (!alive) return
-        setErr('概览数据加载失败（可忽略）')
+        if (aliveRef.current) {
+          setErr('概览数据加载失败（可忽略）')
+        }
       } finally {
-        if (!alive) return
-        setLoading(false)
+        if (aliveRef.current) {
+          setLoading(false)
+        }
       }
     })()
 
     return () => {
-      alive = false
+      aliveRef.current = false
     }
   }, [])
 
@@ -409,8 +411,8 @@ function Donut({ value, total, tone, label }) {
     tone === 'emerald'
       ? 'rgba(16,185,129,0.85)'
       : tone === 'cyan'
-      ? 'rgba(56,189,248,0.85)'
-      : 'rgba(99,102,241,0.85)'
+        ? 'rgba(56,189,248,0.85)'
+        : 'rgba(99,102,241,0.85)'
 
   const bg = 'rgba(255,255,255,0.18)'
   const conic = `conic-gradient(${color} ${pct}%, ${bg} 0)`

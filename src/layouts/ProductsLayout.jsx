@@ -19,31 +19,31 @@ export default function ProductsLayout() {
         {/* Left nav */}
         <aside className="h-fit md:sticky md:top-6 md:w-0 md:flex-none md:overflow-visible">
           {/* ✅ Mobile: wrap pills (no horizontal cut) */}
-        <div className="md:hidden">
-          <div className="-mx-6 px-6">
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((c) => {
-                const to = c.key ? `?category=${encodeURIComponent(c.key)}` : ''
-                const isActive = active === c.key
+          <div className="md:hidden">
+            <div className="-mx-6 px-6">
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((c) => {
+                  const to = c.key ? `?category=${encodeURIComponent(c.key)}` : ''
+                  const isActive = active === c.key
 
-                return (
-                  <NavLink
-                    key={c.key || 'all'}
-                    to={to}
-                    className={[
-                      'rounded-full px-4 py-2 text-sm transition',
-                      isActive
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-                    ].join(' ')}
-                  >
-                    {c.label}
-                  </NavLink>
-                )
-              })}
+                  return (
+                    <NavLink
+                      key={c.key || 'all'}
+                      to={to}
+                      className={[
+                        'rounded-full px-4 py-2 text-sm transition',
+                        isActive
+                          ? 'bg-gray-900 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                      ].join(' ')}
+                    >
+                      {c.label}
+                    </NavLink>
+                  )
+                })}
+              </div>
             </div>
           </div>
-        </div>
 
           {/* ✅ Desktop：rail 不占布局宽度（靠 overflow-visible 挂在左侧） */}
           <div className="hidden md:block">

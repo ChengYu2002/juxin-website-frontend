@@ -164,7 +164,7 @@ export default function ProductCreate() {
       // ✅ Create: POST
       await adminFetch('/api/products/admin', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: payload,
       })
 
       setNotice('产品创建成功 🎉')

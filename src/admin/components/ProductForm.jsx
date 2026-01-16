@@ -1,5 +1,6 @@
 // src/admin/components/product/ProductForm.jsx
 import React from 'react'
+import VariantImageUploader from './ImageUploader'
 
 export default function ProductForm({
   product,
@@ -325,31 +326,39 @@ export default function ProductForm({
                   />
                 </label>
 
-                <label className="space-y-1 md:col-span-2">
-                  <div className="text-sm text-gray-700">
-                    图片 (单独URL占一行)
-                  </div>
-                  <textarea
-                    className="w-full border rounded p-2 text-sm min-h-[110px] resize-y"
-                    value={imagesArrayToTextarea(v.images)}
-                    onChange={(e) =>
-                      updateVariantField(idx, {
-                        images: textareaToImagesArray(e.target.value),
-                      })
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.stopPropagation()
-                      }
-                    }}
-                    placeholder={
-                      '/images/jx-l5/black/1.jpg\n/images/jx-l5/black/2.jpg'
+                <div className="space-y-2 md:col-span-2">
+                  <div className="text-sm text-gray-700">图片 Images</div>
+
+                  {/* ✅ 上传器：追加写入 v.images */}
+                  <VariantImageUploader
+                    images={Array.isArray(v.images) ? v.images : []}
+                    onChange={(nextImages) =>
+                      updateVariantField(idx, { images: nextImages })
                     }
                   />
-                  <div className="text-xs text-gray-500 mt-1">
-                    图片数量: {Array.isArray(v.images) ? v.images.length : 0}
+
+                  {/* ✅ 仍然保留 textarea：单独URL占一行（手工编辑） */}
+                  <div className="mt-2">
+                    <div className="text-sm text-gray-700 mb-1">图片 URL（单独URL占一行，可手动编辑）</div>
+                    <textarea
+                      className="w-full border rounded p-2 text-sm min-h-[110px] resize-y"
+                      value={imagesArrayToTextarea(v.images)}
+                      onChange={(e) =>
+                        updateVariantField(idx, {
+                          images: textareaToImagesArray(e.target.value),
+                        })
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') e.stopPropagation()
+                      }}
+                      placeholder={'https://.../1.jpg\nhttps://.../2.jpg'}
+                    />
+                    <div className="text-xs text-gray-500 mt-1">
+                      图片数量: {Array.isArray(v.images) ? v.images.length : 0}
+                    </div>
                   </div>
-                </label>
+                </div>
+
               </div>
             </div>
           ))}

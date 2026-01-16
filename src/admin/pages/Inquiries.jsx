@@ -55,7 +55,7 @@ export default function AdminInquiries() {
     try {
       await adminFetch(`/api/inquiries/admin/${inquiryId}`, {
         method: 'PUT',
-        body: JSON.stringify({ status: nextStatus }),
+        body: { status: nextStatus },
       })
 
       // 本地更新状态

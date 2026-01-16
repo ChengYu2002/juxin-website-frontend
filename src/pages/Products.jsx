@@ -67,7 +67,7 @@ export default function Products() {
   }, [category])
 
   // ===== 分页 =====
-  const displayProducts = products 
+  const displayProducts = products
   const totalPages = Math.ceil(displayProducts.length / PAGE_SIZE)
 
   const pagedProducts = displayProducts.slice(
@@ -149,6 +149,6 @@ export default function Products() {
           </button>
         </div>
       )}
-    </main> 
+    </main>
   )
 }
