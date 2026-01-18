@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom'
 import PartnersMarquee from '../components/PartnersMarquee'
 import Certifications from '../components/Certifications'
+import usePageTitle from '../hooks/usePageTitle'
 
 const COMPANY = {
   name: 'JUXIN',
@@ -115,6 +116,9 @@ function ImageCard({ title, image }) {
 }
 
 export default function About() {
+  // 设置页面标题
+  usePageTitle('About Us - Juxin')
+
   return (
     <main className="bg-white">
       {/* HERO — German industrial vibe */}

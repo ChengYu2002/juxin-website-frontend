@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useField } from '../hooks/useField'
 import { submitInquiry } from '../services/inquiryService'
+import usePageTitle from '../hooks/usePageTitle'
 
 const COMPANY_EMAIL = 'sale01@cn-jason.net'
 const SUBJECT_PREFIX = 'Inquiry from Juxin Website'
@@ -15,6 +16,8 @@ function isValidEmail(v) {
 //string.trim(): 去除字符串「开头和结尾」的空白字符
 
 export default function Contact() {
+  // 设置页面标题
+  usePageTitle('Contact Us - Juxin')
 
   const name = useField('text')
   const email = useField('email')

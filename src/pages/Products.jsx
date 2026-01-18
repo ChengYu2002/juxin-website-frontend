@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import ProductCard from '../components/ProductCard'
 import { useSearchParams } from 'react-router-dom'
+import usePageTitle from '../hooks/usePageTitle'
 
 export default function Products() {
   const [searchParams] = useSearchParams()
@@ -10,6 +11,15 @@ export default function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  const titleCategory = category
+  ? category
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase())
+  : ''
+
+  // 设置页面标题
+  usePageTitle(category ? `Products: ${titleCategory} - Juxin` : 'All Products - Juxin')
 
   // pagination
   const PAGE_SIZE = 12
@@ -85,7 +95,7 @@ export default function Products() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
       <h1 className="mb-6 text-2xl font-bold">
-        {category ? `Products / ${category}` : 'All Products'}
+        {category ? `Products / ${titleCategory}` : 'All Products'}
       </h1>
 
       {/* Loading */}

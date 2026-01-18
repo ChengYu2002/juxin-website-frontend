@@ -1,13 +1,14 @@
 // src/pages/Product.jsx
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-// import products from '../data/products.mock'
 
 import VariantSelector from '../components/VariantSelector'
 import ProductGallery from '../components/ProductGallery'
 import ProductActions from '../components/ProductActions'
 import ProductSpecs from '../components/ProductSpecs'
 import ProductRecommendations from '../components/ProductRecommendations'
+
+import usePageTitle from '../hooks/usePageTitle'
 
 function ProductDetail({ product }) {
   // 初始化状态，选择第一个变体和第一张图片
@@ -81,14 +82,12 @@ export default function Product() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-
-  // if (!product) {
-  //   return (
-  //     <main className="mx-auto max-w-4xl px-5 py-8">
-  //       <h2 className="text-lg font-semibold">Product not found</h2>
-  //     </main>
-  //   )
-  // }
+  // 设置页面标题
+  usePageTitle(
+    product
+      ? `${product.name} - Juxin`
+      : 'Product - Juxin'
+  )
 
   // 反正产品抖动
   useEffect(() => {
