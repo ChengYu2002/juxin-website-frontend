@@ -12,13 +12,13 @@ export default function Products() {
   const [error, setError] = useState('')
 
   // pagination
-  const PAGE_SIZE = 16
+  const PAGE_SIZE = 12
   const [currentPage, setCurrentPage] = useState(1)
 
   // 初始化: 打开页面永远滚动到顶部
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-  }, [])
+  }, [category, currentPage])
 
   // 拉产品列表（随 category 变化）
   useEffect(() => {

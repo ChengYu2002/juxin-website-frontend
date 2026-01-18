@@ -40,7 +40,10 @@ function ProductDetail({ product }) {
           </div>
 
           {/* 主图片区域 如果没有images则传空数组*/ }
-          <ProductGallery images={selectedVariant?.images || []} />
+          <ProductGallery
+            key={`${product.id}-${selectedVariantIndex}`}
+            images={selectedVariant?.images || []}
+          />
         </section>
 
         {/* 右：信息区 */}

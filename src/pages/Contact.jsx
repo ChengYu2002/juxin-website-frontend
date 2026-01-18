@@ -239,7 +239,7 @@ export default function Contact() {
           <label className="block text-sm font-medium">Message</label>
           <textarea
             {...message.input}
-            rows={6}
+            rows={10}
             className={`w-full rounded-md border px-3 py-2 ${
               visibleValidation.message ? 'border-red-300' : 'border-gray-300'
             }`}

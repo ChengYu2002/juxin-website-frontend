@@ -2,7 +2,12 @@
 import { Link } from 'react-router-dom'
 
 export default function ProductCard({ product }) {
-  const mainImage = product?.variants?.[0]?.images?.[0]
+  const variants = Array.isArray(product?.variants) ? product.variants : []
+  const mainImage = variants?.[0]?.images?.[0]
+
+  // ✅ 1 variant = 1 color
+  const colorCount = variants.length
+  const extraColors = Math.max(0, colorCount - 1)
 
   return (
     <Link
@@ -54,6 +59,15 @@ export default function ProductCard({ product }) {
         <h3 className="text-sm font-semibold tracking-wide text-slate-800">
           {product.name}
         </h3>
+
+        {/* ✅ 颜色提示：极轻、不抢 */}
+        <p
+          className={`mt-1 text-xs text-slate-500 ${
+            extraColors > 0 ? 'visible' : 'invisible'
+          }`}
+        >
+          +{extraColors} more {extraColors === 1 ? 'color' : 'colors'}
+        </p>
 
         {/* 极轻强调线 */}
         <div
