@@ -1,4 +1,13 @@
 import { Outlet, NavLink, useSearchParams } from 'react-router-dom'
+import {
+  Layers,
+  ShoppingBag,
+  Truck,
+  Car,
+  Tent,
+  Move,
+  Backpack
+} from 'lucide-react'
 
 const CATEGORIES = [
   { key: '', label: 'All Products' },
@@ -8,89 +17,70 @@ const CATEGORIES = [
   { key: 'outdoor-furniture', label: 'Outdoor Furniture' },
 ]
 
+function CategoryIcon({ k, className }) {
+  switch (k) {
+  case '':
+    return <Layers className={className} />
+  case 'shopping-trolley':
+    return <ShoppingBag className={className} />
+  case 'utility-trolley':
+    return <Truck className={className} />
+  case 'camping-wagon':
+    return <Backpack className={className} />
+  case 'outdoor-furniture':
+    return <Tent className={className} />
+  default:
+    return null
+  }
+}
+
 export default function ProductsLayout() {
   const [searchParams] = useSearchParams()
   const active = searchParams.get('category') || ''
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
-      {/* ✅ Desktop 用 flex：右侧内容不再被 sidebar 推走 */}
-      <div className="flex flex-col gap-4 md:flex-row md:gap-0">
-        {/* Left nav */}
-        <aside className="h-fit md:sticky md:top-6 md:w-0 md:flex-none md:overflow-visible">
-          {/* ✅ Mobile: wrap pills (no horizontal cut) */}
-          <div className="md:hidden">
-            <div className="-mx-6 px-6">
-              <div className="flex flex-wrap gap-2">
-                {CATEGORIES.map((c) => {
-                  const to = c.key ? `?category=${encodeURIComponent(c.key)}` : ''
-                  const isActive = active === c.key
+      {/* ✅ Category pills */}
+      <div className="-mx-6 px-6">
+        <div className="flex flex-wrap gap-2 md:gap-3">
+          {CATEGORIES.map((c) => {
+            const to = c.key ? `?category=${encodeURIComponent(c.key)}` : ''
+            const isActive = active === c.key
 
-                  return (
-                    <NavLink
-                      key={c.key || 'all'}
-                      to={to}
-                      className={[
-                        'rounded-full px-4 py-2 text-sm transition',
-                        isActive
-                          ? 'bg-gray-900 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-                      ].join(' ')}
-                    >
-                      {c.label}
-                    </NavLink>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
+            const iconClass = [
+              'h-4 w-4',
+              'transition-colors',
+              isActive ? 'text-white/90' : 'text-gray-500 group-hover:text-gray-700',
+            ].join(' ')
 
-          {/* ✅ Desktop：rail 不占布局宽度（靠 overflow-visible 挂在左侧） */}
-          <div className="hidden md:block">
-            {/* 关键：这个盒子“挂”到左侧，不推右侧内容 */}
-            <div className="w-[160px] -ml-[176px]">
-              <nav className="relative">
-                {/* rail */}
-                <div className="absolute left-0 top-0 h-full w-px bg-gray-200" />
-
-                {CATEGORIES.map((c) => {
-                  const to = c.key ? `?category=${encodeURIComponent(c.key)}` : ''
-                  const isActive = active === c.key
-
-                  return (
-                    <NavLink
-                      key={c.key || 'all'}
-                      to={to}
-                      className={[
-                        'group relative block py-2 pl-3 pr-2 text-sm transition',
-                        isActive
-                          ? 'text-gray-900 font-medium'
-                          : 'text-gray-600 hover:text-gray-900',
-                      ].join(' ')}
-                    >
-                      {/* active indicator */}
-                      <span
-                        className={[
-                          'absolute left-0 top-2.5 h-5 w-[2px] rounded-full transition',
-                          isActive
-                            ? 'bg-gray-900'
-                            : 'bg-transparent group-hover:bg-gray-300',
-                        ].join(' ')}
-                      />
-                      {c.label}
-                    </NavLink>
-                  )
-                })}
-              </nav>
-            </div>
-          </div>
-        </aside>
-
-        {/* Right content：✅ 基本回到你原来 Products 的对齐 */}
-        <section className="min-w-0 flex-1">
-          <Outlet />
-        </section>
+            return (
+              <NavLink
+                key={c.key || 'all'}
+                to={to}
+                className={[
+                  'group inline-flex items-center gap-2',
+                  'rounded-full px-4 py-2 text-sm',
+                  'border transition-all duration-200',
+                  'hover:-translate-y-[1px] hover:shadow-sm',
+                  'active:translate-y-0 active:shadow-none',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900/20',
+                  isActive
+                    ? 'bg-gray-900 text-white border-gray-900 shadow-sm'
+                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300',
+                ].join(' ')}
+              >
+                <CategoryIcon k={c.key} className={iconClass} />
+                <span>{c.label}</span>
+              </NavLink>
+            )
+          })}
+        </div>
       </div>
+
+      {/* ✅ Content */}
+      <section className="mt-6 min-w-0">
+        <Outlet />
+      </section>
     </main>
   )
 }

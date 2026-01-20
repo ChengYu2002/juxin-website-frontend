@@ -1,18 +1,24 @@
 // src/components/ProductGallery.jsx
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Lightbox from 'yet-another-react-lightbox'
 import 'yet-another-react-lightbox/styles.css'
 
 /**
  * ProductGallery
  * - 桌面端：hover 局部放大（放大镜）
- * - 移动端：点击打开大图（Lightbox）
+ * - 移动端：左右滑切图（swipe）+ 点击打开大图（Lightbox）
  * - 支持左右切换、圆点指示、图片计数
  */
 export default function ProductGallery({ images = [] }) {
   // 当前选中该变体下第几张图
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+
+  // ✅ swipe refs（手机端左右滑）
+  const touchStartXRef = useRef(null)
+  const touchStartYRef = useRef(null)
+  const swipingRef = useRef(false)
+  const SWIPE_THRESHOLD = 40 // px
 
   if (!images || images.length === 0) {
     return (
@@ -22,17 +28,12 @@ export default function ProductGallery({ images = [] }) {
     )
   }
 
-  // ✅ 当图片数组变化（切换颜色）时，不用 effect 重置 state
-  // 这里做“安全索引”：
-  // - 如果原来的 selectedImageIndex 超出新 images 的范围，就回到 0
-  // - 这样避免了 setState in effect，同时也不会出现 images[selectedImageIndex] 变成 undefined
+  // ✅ 安全索引（切换颜色时避免越界）
   const safeIndex =
     selectedImageIndex >= 0 && selectedImageIndex < images.length
       ? selectedImageIndex
       : 0
 
-  // 如果 length=5：
-  // 0→1→2→3→4→0 循环
   const nextImage = () => {
     setSelectedImageIndex((prev) => {
       const base = prev >= 0 && prev < images.length ? prev : 0
@@ -40,11 +41,6 @@ export default function ProductGallery({ images = [] }) {
     })
   }
 
-  // 向前切换图片（环形轮播）
-  // 逻辑说明：
-  // 1. prev - 1        → 向前一张
-  // 2. + length        → 当 prev === 0 时，避免索引变成 -1
-  // 3. % length        → 将索引限制在 [0, length - 1] 范围内，实现首尾循环
   const prevImage = () => {
     setSelectedImageIndex((prev) => {
       const base = prev >= 0 && prev < images.length ? prev : 0
@@ -52,21 +48,60 @@ export default function ProductGallery({ images = [] }) {
     })
   }
 
+  // ✅ swipe handlers
+  const onTouchStart = (e) => {
+    if (!images || images.length <= 1) return
+    const t = e.touches?.[0]
+    if (!t) return
+    swipingRef.current = true
+    touchStartXRef.current = t.clientX
+    touchStartYRef.current = t.clientY
+  }
+
+  const onTouchEnd = (e) => {
+    if (!images || images.length <= 1) return
+    if (!swipingRef.current) return
+    swipingRef.current = false
+
+    const startX = touchStartXRef.current
+    const startY = touchStartYRef.current
+    const t = e.changedTouches?.[0]
+
+    touchStartXRef.current = null
+    touchStartYRef.current = null
+
+    if (startX === null || startY === null || !t) return
+
+    const dx = t.clientX - startX
+    const dy = t.clientY - startY
+
+    // ✅ 避免和页面上下滚动冲突：只有横向滑为主才翻页
+    if (Math.abs(dx) < Math.abs(dy)) return
+    if (Math.abs(dx) < SWIPE_THRESHOLD) return
+
+    if (dx < 0) nextImage()
+    else prevImage()
+  }
+
   return (
     <>
       {/* ===== 主图区域 ===== */}
-      <div className="relative mb-4 h-96 w-full overflow-hidden rounded-lg border bg-white">
+      <div
+        className="relative mb-4 h-96 w-full overflow-hidden rounded-lg border bg-white touch-pan-y"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <img
           src={images[safeIndex]}
           alt={`Product image ${safeIndex + 1}`}
           onClick={() => setLightboxOpen(true)}
           className="h-full w-full cursor-zoom-in object-contain"
+          draggable={false}
         />
 
         {/* ===== 导航按钮 / 指示器（多图才显示） ===== */}
         {images.length > 1 && (
           <>
-            {/* 上一张 */}
             <button
               type="button"
               onClick={prevImage}
@@ -76,7 +111,6 @@ export default function ProductGallery({ images = [] }) {
               ←
             </button>
 
-            {/* 下一张 */}
             <button
               type="button"
               onClick={nextImage}
@@ -86,7 +120,6 @@ export default function ProductGallery({ images = [] }) {
               →
             </button>
 
-            {/* 圆点指示器 */}
             <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
               {images.map((_, index) => (
                 <button
@@ -101,7 +134,6 @@ export default function ProductGallery({ images = [] }) {
               ))}
             </div>
 
-            {/* 图片计数 */}
             <div className="absolute right-4 top-4 rounded-full bg-black/50 px-3 py-1 text-sm text-white">
               {safeIndex + 1} / {images.length}
             </div>

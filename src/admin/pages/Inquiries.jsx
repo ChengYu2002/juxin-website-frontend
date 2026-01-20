@@ -28,7 +28,7 @@ export default function AdminInquiries() {
 
       setInquiries(list)
     } catch (err) {
-      setError(err?.message ? `${err.message} - 加载询盘失败` : '加载询盘失败')
+      setError(err?.message ? `${err.message} - 加载询盘失败 (请尝试重新登录)` : '加载询盘失败 (请尝试重新登录)')
 
     } finally {
       setLoading(false)

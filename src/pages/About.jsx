@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom'
 import PartnersMarquee from '../components/PartnersMarquee'
 import Certifications from '../components/Certifications'
+import usePageTitle from '../hooks/usePageTitle'
 
 const COMPANY = {
   name: 'JUXIN',
@@ -28,6 +29,22 @@ const CAPABILITY = [
 ]
 
 const CLIENT_TYPES = ['Retailers', 'Importers', 'Wholesalers']
+
+const CAPABILITY_MEDIA = [
+  {
+    title: 'Assembly Lines 2',
+    image: 'https://juxin-images-cn.oss-cn-hangzhou.aliyuncs.com/website/production_line2.png',
+  },
+  {
+    title: 'Assembly Lines 1',
+    image: 'https://juxin-images-cn.oss-cn-hangzhou.aliyuncs.com/website/production_line1.png',
+  },
+  {
+    title: 'Container Loading',
+    desc: 'Container-level order execution with practical loading experience.',
+    image: 'https://juxin-images-cn.oss-cn-hangzhou.aliyuncs.com/products/container_loading.png',
+  },
+]
 
 function Container({ children }) {
   return <div className="mx-auto w-full max-w-6xl px-6 lg:px-8">{children}</div>
@@ -92,8 +109,8 @@ function Stat({ label, value }) {
 function FeatureBlock({ title, desc }) {
   return (
     <div className="bg-white">
-      <div className="border-l-2 border-slate-900 px-6 py-5">
-        <p className="text-sm font-semibold text-slate-900">{title}</p>
+      <div className="border-l border-slate-200 px-6 py-5">
+        <p className="text-sm lg:text-[13px] font-semibold text-slate-900">{title}</p>
         {desc ? <p className="mt-2 text-sm leading-6 text-slate-600">{desc}</p> : null}
       </div>
     </div>
@@ -115,6 +132,9 @@ function ImageCard({ title, image }) {
 }
 
 export default function About() {
+  // 设置页面标题
+  usePageTitle('About Us - Juxin')
+
   return (
     <main className="bg-white">
       {/* HERO — German industrial vibe */}
@@ -160,9 +180,12 @@ export default function About() {
             </div>
 
             <div className="mt-10 sm:mt-12 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <ImageCard image="/images/about/factory_gate.jpg" title="Factory" />
+              {/* <ImageCard image="/images/about/factory_gate.jpg" title="Factory" />
               <ImageCard image="/images/about/exhibition.jpg" title="INTERNATIONAL Exhibition" />
-              <ImageCard image="/images/about/container_loading.png" title="Container Loading" />
+              <ImageCard image="/images/about/container_loading.png" title="Container Loading" /> */}
+              <ImageCard image="https://juxin-images-cn.oss-cn-hangzhou.aliyuncs.com/products/factory_gate.jpg" title="Factory" />
+              <ImageCard image="https://juxin-images-cn.oss-cn-hangzhou.aliyuncs.com/products/exhibition.jpg" title="INTERNATIONAL Exhibition" />
+              <ImageCard image="https://juxin-images-cn.oss-cn-hangzhou.aliyuncs.com/products/container_loading.png" title="Container Loading" />
             </div>
           </div>
         </Container>
@@ -295,31 +318,70 @@ export default function About() {
       {/* CAPABILITY — big, blocky, industrial */}
       <section className="bg-white">
         <Container>
-          <div className="py-12 sm:py-16 lg:py-20">
-            <div className="grid gap-10 lg:gap-12 lg:grid-cols-12 lg:items-start">
-              <div className="lg:col-span-5">
+          <div className="py-12 sm:py-16 lg:py-18">
+            <div className="grid gap-8 lg:gap-10 lg:grid-cols-12 lg:items-start">
+              {/* 左侧：图片区（网页端更大） */}
+              <div className="lg:col-span-6">
                 <SectionTitle
                   kicker="Capability"
                   title="Production & delivery confidence"
-                  desc="This section reduces perceived risk: capacity, workflow, and delivery realism."
+                  // desc="This section reduces perceived risk: capacity, workflow, and delivery realism."
                 />
+                {/* 这个地方加生产线，包装图片   */}
+
+                <div className="mt-7 grid gap-4">
+                  {/* 大图 */}
+                  {CAPABILITY_MEDIA?.[0] ? (
+                    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow">
+                      <div className="aspect-[16/9] overflow-hidden bg-slate-100">
+                        <img
+                          src={CAPABILITY_MEDIA[0].image}
+                          alt={CAPABILITY_MEDIA[0].title}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {/* 两张小图 */}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {CAPABILITY_MEDIA?.slice(1, 3).map((x) => (
+                      <div
+                        key={x.title}
+                        className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow"
+                      >
+                        <div className="aspect-[3/2] overflow-hidden bg-slate-100">
+                          <img
+                            src={x.image}
+                            alt={x.title}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="lg:col-span-7">
-                <div className="grid gap-4 sm:grid-cols-2">
+              {/* 右侧：文字区（网页端稍微收一点） */}
+              <div className="lg:col-span-6">
+                {/* 能力清单 */}
+                <div className="grid gap-4 lg:gap-4 sm:grid-cols-2">
                   {CAPABILITY.map((t) => (
                     <FeatureBlock key={t} title={t} />
                   ))}
                 </div>
 
-                <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+                {/* 合作方式 */}
+                <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 lg:p-7 shadow-sm">
                   <p className="text-xs font-semibold tracking-[0.22em] uppercase text-slate-500">
                     How we work best
                   </p>
-                  <p className="mt-3 text-sm leading-7 text-slate-700">
-                    We work best with clients seeking stable supply and clear specifications. For a
-                    fast quotation, provide model, target market, quantity, and packaging
-                    requirements.
+                  <p className="mt-3 text-sm lg:text-[13px] leading-7 text-slate-700">
+                    We work best with clients seeking stable supply and clear specifications. For a fast
+                    quotation, provide model, target market, quantity, and packaging requirements.
                   </p>
 
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -341,7 +403,7 @@ export default function About() {
                     <p className="text-xs font-semibold tracking-[0.22em] uppercase text-slate-500">
                       Patent note
                     </p>
-                    <p className="mt-3 text-sm leading-7 text-slate-700">
+                    <p className="mt-3 text-sm lg:text-[13px] leading-7 text-slate-700">
                       Some models are protected by design patents. Details available upon request.
                     </p>
                   </div>
@@ -351,6 +413,9 @@ export default function About() {
           </div>
         </Container>
       </section>
+
+
+
 
       {/* CTA */}
       <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-zinc-950">

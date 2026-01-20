@@ -43,7 +43,7 @@ export default function AdminProducts() {
 
       setProducts(list)
     } catch (err) {
-      setError((err?.message ? `${err.message} - ` : '') + '获取产品列表失败')
+      setError((err?.message ? `${err.message} - ` : '') + '获取产品列表失败 (请尝试重新登录)')
     } finally {
       setLoading(false)
     }

@@ -29,7 +29,7 @@ export default function AdminDashboard() {
       } catch (e) {
         console.error(e)
         if (aliveRef.current) {
-          setErr('概览数据加载失败（可忽略）')
+          setErr('概览数据加载失败（请尝试重新登录）')
         }
       } finally {
         if (aliveRef.current) {
