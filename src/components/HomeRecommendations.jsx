@@ -158,8 +158,8 @@ export default function HomeRecommendations() {
                       ].join(' ')}
                     >
                       {group.map((p) => (
-                        <ProductCard 
-                          key={p.id} 
+                        <ProductCard
+                          key={p.id}
                           product={p}
                           // 可选：传递给ProductCard额外的样式类
                           className="mx-auto w-full"

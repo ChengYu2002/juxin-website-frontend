@@ -8,7 +8,8 @@ export default function Hero() {
       <div className="relative h-[420px] sm:h-[520px] md:h-[560px] lg:h-[calc(100vh-64px)] lg:min-h-[720px]">
         {/* 背景图：不同屏幕焦点不同 */}
         <img
-          src="/images/hero/1.png"
+          // src="/images/hero/1.png"
+          src="https://juxin-images-cn.oss-cn-hangzhou.aliyuncs.com/products/hero1.png"
           alt="Warehouse trolleys"
           className="
             absolute inset-0 h-full w-full object-cover

@@ -13,10 +13,10 @@ export default function Products() {
   const [error, setError] = useState('')
 
   const titleCategory = category
-  ? category
+    ? category
       .replace(/-/g, ' ')
       .replace(/\b\w/g, c => c.toUpperCase())
-  : ''
+    : ''
 
   // 设置页面标题
   usePageTitle(category ? `Products: ${titleCategory} - Juxin` : 'All Products - Juxin')

@@ -2,7 +2,7 @@ import { Outlet, NavLink, useSearchParams } from 'react-router-dom'
 import {
   Layers,
   ShoppingBag,
-  Truck,        
+  Truck,
   Car,
   Tent,
   Move,
@@ -19,18 +19,18 @@ const CATEGORIES = [
 
 function CategoryIcon({ k, className }) {
   switch (k) {
-    case '':
-      return <Layers className={className} />
-    case 'shopping-trolley':
-      return <ShoppingBag className={className} />
-    case 'utility-trolley':
-      return <Truck className={className} />   
-    case 'camping-wagon':
-      return <Backpack className={className} />
-    case 'outdoor-furniture':
-      return <Tent className={className} />
-    default:
-      return null
+  case '':
+    return <Layers className={className} />
+  case 'shopping-trolley':
+    return <ShoppingBag className={className} />
+  case 'utility-trolley':
+    return <Truck className={className} />
+  case 'camping-wagon':
+    return <Backpack className={className} />
+  case 'outdoor-furniture':
+    return <Tent className={className} />
+  default:
+    return null
   }
 }
 

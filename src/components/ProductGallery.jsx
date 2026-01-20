@@ -70,7 +70,7 @@ export default function ProductGallery({ images = [] }) {
     touchStartXRef.current = null
     touchStartYRef.current = null
 
-    if (startX == null || startY == null || !t) return
+    if (startX === null || startY === null || !t) return
 
     const dx = t.clientX - startX
     const dy = t.clientY - startY
