@@ -1,6 +1,6 @@
 // src/admin/components/ImageUploader.jsx
 import { useState, useRef } from 'react'
-import { uploadAdminImages } from '../../services/adminUploads.js'
+import { uploadAdminImages, deleteAdminImageByUrl } from '../../services/adminUploads.js'
 
 const MAX_FILES_PER_PICK = 5
 const MAX_FILES = 10
@@ -31,7 +31,9 @@ export default function VariantImageUploader({
   disabled = false, // 父组件可以控制禁用（比如整个表单提交中禁用所有输入）
 }) {
   // 上传中就要禁用按钮、改文案（Uploading...)
-  const [busy, setBusy] = useState(false)
+  const [action, setAction] = useState(null)
+  const busy = action !== null
+
   const [error, setError] = useState('')
   const fileRef = useRef(null) // ✅ 更稳：用 ref 手动触发文件选择框
 
@@ -70,12 +72,12 @@ export default function VariantImageUploader({
 
     // 上传
     try {
-      setBusy(true) // 开始上传，进入 busy 状态
+      setAction('upload') // 开始上传，进入 busy 状态
       const res = await uploadAdminImages(files)
 
       const newUrls = (res.items || [])
-        .map((item) => item?.url)  // 提取 url
-        .filter(Boolean)          // 过滤掉 null/undefined
+        .map((item) => item?.url)
+        .filter(Boolean)
 
       const allImages = uniqKeepOrder([...(images || []), ...newUrls])
 
@@ -86,19 +88,50 @@ export default function VariantImageUploader({
       const msg = base ? `${base} - 上传图片失败` : '上传图片失败'
       setError(msg)
     } finally {
-      setBusy(false)
+      setAction(null)
     }
 
   }
 
-  // 删除图片
-  const removeAt = (index) => {
-    const next = images.slice() // 复制数组, 浅拷贝，避免直接修改 props
-    next.splice(index, 1)       // 删除指定 index
-    onChange?.(next)
+  // 判断是否是已上传到 OSS 的图片 URL
+  function isOssUploadedUrl(url) {
+    try {
+      const u = new URL(url, window.location.origin)
+      return u.pathname.startsWith('/products/')
+    } catch {
+      return false
+    }
   }
 
-  // 上移图片
+  // 删除图片
+  const removeAt = async(index) => {
+    const url = images[index]
+    if (!url) return
+
+    const next = images.slice()
+    next.splice(index, 1)
+
+    try {
+      setError('')
+      setAction('delete')
+
+      if (isOssUploadedUrl(url)) {
+        
+        await deleteAdminImageByUrl(url)
+      }
+
+      onChange?.(next)
+    }
+    catch(err) {
+      const base = (err?.message && String(err.message).trim()) || ''
+      const msg = base ? `${base} - 删除图片失败` : '删除图片失败'
+      setError(msg)
+
+    } finally {
+      setAction(null)
+    }
+  }
+
   const moveUp = (index) => {
     if (index <= 0) return
     const next = images.slice()
@@ -106,7 +139,6 @@ export default function VariantImageUploader({
     onChange?.(next)
   }
 
-  // 下移图片
   const moveDown = (index) => {
     if (index >= images.length - 1) return
     const next = images.slice()
@@ -114,7 +146,6 @@ export default function VariantImageUploader({
     onChange?.(next)
   }
 
-  // 设为主图：把当前图片移到第 0 位
   const setAsCover = (index) => {
     if (index <= 0) return
     const next = images.slice()
@@ -123,16 +154,13 @@ export default function VariantImageUploader({
     onChange?.(next)
   }
 
-  // 是否可以选择图片，取决于 disabled、busy 和 当前图片数量
   const canPick = !disabled && !busy && images.length < MAX_FILES
-
-  // ✅ busy 时禁用排序/删除，避免上传回包覆盖用户操作
   const canEdit = !disabled && !busy
 
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 flex-wrap">
-        {/* ✅ input 用 ref 隐藏，button 手动触发，避免 label 点击范围异常 */}
+
         <input
           ref={fileRef}
           type="file"
@@ -154,7 +182,7 @@ export default function VariantImageUploader({
             canPick ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed',
           ].join(' ')}
         >
-          {busy ? '上传中...' : '上传图片 +'}
+          {action === 'upload' ? '正在上传…' : '上传图片'}
         </button>
 
         <div className="text-xs text-gray-500">
@@ -181,7 +209,7 @@ export default function VariantImageUploader({
               </div>
 
               <div className="border-t p-2 flex items-center justify-between gap-2">
-                {/* 左侧：主图标记 */}
+
                 <div className="min-w-0">
                   {idx === 0 ? (
                     <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
@@ -192,7 +220,6 @@ export default function VariantImageUploader({
                   )}
                 </div>
 
-                {/* 右侧：操作按钮 */}
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
@@ -216,7 +243,6 @@ export default function VariantImageUploader({
                       'rounded-md px-2 py-1 text-[11px] border border-gray-200 text-gray-700',
                       (!canEdit || idx === 0) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-50',
                     ].join(' ')}
-                    title="上移一位"
                   >
                     上移
                   </button>
@@ -245,7 +271,7 @@ export default function VariantImageUploader({
                       !canEdit ? 'opacity-40 cursor-not-allowed' : 'hover:bg-red-50',
                     ].join(' ')}
                   >
-                    删除
+                    {action === 'delete' ? '正在删除…' : '删除'}
                   </button>
                 </div>
               </div>
