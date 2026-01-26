@@ -186,8 +186,8 @@ export default function About() {
               <ImageCard image="https://img.juxin-manufacturing.com/website/factory_gate.jpg" title="Factory" />
               <ImageCard image="https://img.juxin-manufacturing.com/website/exhibition.jpg" title="INTERNATIONAL Exhibition" />
               <ImageCard image="https://img.juxin-manufacturing.com/website/container_loading.png" title="Container Loading" />
-              
-              
+
+
             </div>
           </div>
         </Container>

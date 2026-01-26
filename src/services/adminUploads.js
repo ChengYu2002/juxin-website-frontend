@@ -15,3 +15,13 @@ export async function uploadAdminImages(files) {
     body: formData, // 直接把 FormData 对象作为请求体发送, 不必要设置 Content-Type，浏览器会自动处理
   })
 }
+
+export async function deleteAdminImageByUrl(imageUrl) {
+  const url = String(imageUrl || '').trim()
+  if (!url) throw new Error('Missing imageUrl')
+
+  const qs = `?url=${encodeURIComponent(url)}`
+  return adminFetch(`/api/admin/uploads/images${qs}`, {
+    method: 'DELETE',
+  })
+}
