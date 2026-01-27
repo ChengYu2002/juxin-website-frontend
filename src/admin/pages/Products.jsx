@@ -28,6 +28,9 @@ export default function AdminProducts() {
   // 筛选条件
   const [filter, setFilter] = useState('create-time')
 
+  // 搜索条件：按产品名
+  const [search, setSearch] = useState('')
+
   // pagination
   const PAGE_SIZE = 20
   const [currentPage, setCurrentPage] = useState(1)
@@ -54,7 +57,7 @@ export default function AdminProducts() {
   }, [])
 
   // ===== 过滤 + 排序（前端本地）=====
-  // useMemo 在render期间缓存计算结果，依赖 products 和 filter 改变时重新计算
+  // useMemo 在render期间缓存计算结果，依赖 products, filter 和 search改变时重新计算
   const filteredAndSorted = useMemo(() => {
     const config = FILTER_MAP[filter] || {}
 
@@ -63,13 +66,21 @@ export default function AdminProducts() {
     // 过滤: 状态
     // isActive 如果有定义为boolean，而不是undefined或者null，则过滤
     if (typeof config.isActive === 'boolean') {
-      list = list.filter(p => !!p.isActive === config.isActive)
+      list = list.filter((p) => !!p.isActive === config.isActive)
       // !! 确保 p.isActive 一定是 boolean, 防止 undefined/null (具体看！！的用法)
     }
 
     // 过滤: 分类
     if (config.category) {
-      list = list.filter(p => p.category === config.category)
+      list = list.filter((p) => p.category === config.category)
+    }
+
+    // 过滤: 名称搜索（包含匹配）
+    const q = (search ?? '').toString().trim().toLowerCase()
+    if (q) {
+      list = list.filter((p) =>
+        (p?.name ?? '').toString().trim().toLowerCase().includes(q)
+      )
     }
 
     // 排序: 默认按 sortOrder 降序、time 降序
@@ -88,13 +99,12 @@ export default function AdminProducts() {
     })
 
     return list
+  }, [products, filter, search])
 
-  }, [products, filter])
-
-  // filter 改变时：回到第 1 页
+  // filter或search 改变时：回到第 1 页
   useEffect(() => {
     setCurrentPage(1)
-  }, [filter])
+  }, [filter, search])
 
   // ===== 分页 =====
   const totalPages = Math.ceil(filteredAndSorted.length / PAGE_SIZE)
@@ -123,7 +133,6 @@ export default function AdminProducts() {
       })
 
       await loadProducts()
-
     } catch (err) {
       alert(err?.message ? `${err.message} - 更新产品状态失败` : '更新产品状态失败')
     }
@@ -154,21 +163,61 @@ export default function AdminProducts() {
         <h2 className="text-lg font-semibold">Products 产品管理</h2>
 
         <div className="flex items-center gap-2">
-          {/* 新增产品按钮 */}
-          <button
-            onClick={() => navigate('/admin/products-create')}
-            className="text-sm px-4 py-2 rounded border border-indigo-300 text-indigo-600 hover:bg-indigo-50"
-          >
-            + 新增产品
-          </button>
+          {/* 搜索框：按产品名 */}
+          <div className="flex-1 flex justify-center">
+            <div className="relative w-96">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="🔍 搜索产品名称..."
+                className="
+                  w-full
+                  px-4 py-2
+                  text-sm
+                  border border-gray-200
+                  rounded-lg
+                  shadow-sm
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-indigo-400
+                  focus:border-indigo-400
+                  bg-white
+                "
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="
+                    absolute right-2 top-1/2 -translate-y-1/2
+                    text-gray-400 hover:text-gray-700 text-sm
+                  "
+                  title="清空"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
 
-          {/* 原来的筛选 */}
-          <div className="flex items-center gap-2">
+          {/* 筛选 */}
+          <div className="flex items-center gap-2 ml-6 mr-6">
             <span className="text-xs text-gray-500">筛选</span>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="text-sm border rounded px-2 py-1"
+              className="
+                text-sm
+                px-3 py-2
+                rounded-lg
+                border border-gray-200
+                bg-white
+                text-gray-700
+                focus:outline-none
+                focus:ring-2
+                focus:ring-indigo-400
+                focus:border-indigo-400
+                transition
+              "
             >
               <optgroup label="排序">
                 <option value="create-time">最新更新（默认）</option>
@@ -185,6 +234,27 @@ export default function AdminProducts() {
               </optgroup>
             </select>
           </div>
+
+          {/* 新增产品按钮 */}
+          <button
+            onClick={() => navigate('/admin/products-create')}
+            className="
+              text-sm
+              px-5 py-2.5
+              rounded-xl
+              bg-indigo-50
+              border border-indigo-100
+              text-indigo-700
+              font-medium
+              shadow-sm
+              hover:bg-indigo-100
+              hover:shadow-md
+              active:scale-[0.98]
+              transition-all
+            "
+          >
+            + 新增产品
+          </button>
         </div>
       </div>
 
@@ -195,13 +265,9 @@ export default function AdminProducts() {
         </div>
       )}
 
-      {loading && (
-        <div className="text-sm text-gray-600">Loading...</div>
-      )}
+      {loading && <div className="text-sm text-gray-600">Loading...</div>}
 
-      {error && (
-        <div className="text-sm text-red-600">{error}</div>
-      )}
+      {error && <div className="text-sm text-red-600">{error}</div>}
 
       {!loading && !error && filteredAndSorted.length === 0 && (
         <div className="text-sm text-gray-600">暂无符合筛选条件的产品</div>
@@ -210,7 +276,7 @@ export default function AdminProducts() {
       {!loading && !error && filteredAndSorted.length > 0 && (
         <>
           <ul className="space-y-2">
-            {pagedProducts.map(p => {
+            {pagedProducts.map((p) => {
               const pid = getPid(p) //
               return (
                 <li
@@ -272,7 +338,7 @@ export default function AdminProducts() {
           {totalPages > 1 && (
             <div className="mt-4 flex justify-center items-center gap-2">
               <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 className="px-2 py-1 border rounded disabled:opacity-50"
               >
@@ -282,7 +348,7 @@ export default function AdminProducts() {
                 第 {currentPage} 页 / 共 {totalPages} 页
               </span>
               <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
                 className="px-2 py-1 border rounded disabled:opacity-50"
               >

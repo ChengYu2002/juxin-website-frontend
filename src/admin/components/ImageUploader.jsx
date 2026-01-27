@@ -116,7 +116,7 @@ export default function VariantImageUploader({
       setAction('delete')
 
       if (isOssUploadedUrl(url)) {
-        
+
         await deleteAdminImageByUrl(url)
       }
 
