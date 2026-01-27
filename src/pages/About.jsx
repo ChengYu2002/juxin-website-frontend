@@ -33,16 +33,16 @@ const CLIENT_TYPES = ['Retailers', 'Importers', 'Wholesalers']
 const CAPABILITY_MEDIA = [
   {
     title: 'Assembly Lines 2',
-    image: 'https://img.juxin-manufacturing.com/website/production_line2.png',
+    image: 'https://img.juxin-manufacturing.com/website/production_line2.webp',
   },
   {
     title: 'Assembly Lines 1',
-    image: 'https://img.juxin-manufacturing.com/website/production_line1.png',
+    image: 'https://img.juxin-manufacturing.com/website/production_line1.webp',
   },
   {
     title: 'Container Loading',
     desc: 'Container-level order execution with practical loading experience.',
-    image: 'https://img.juxin-manufacturing.com/website/container_loading.png',
+    image: 'https://img.juxin-manufacturing.com/website/container_loading.webp',
   },
 ]
 

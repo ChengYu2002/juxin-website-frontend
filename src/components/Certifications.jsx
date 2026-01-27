@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const CERT_FILES = ['ISO_Envrioment.jpg', 'ISO_Quality.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg']
+const CERT_FILES = ['ISO_Envrioment.webp', 'ISO_Quality.webp', '3.webp', '4.webp', '5.webp', '6.webp', '7.webp']
 
 const certList = CERT_FILES.map((file) => ({
   id: file,
