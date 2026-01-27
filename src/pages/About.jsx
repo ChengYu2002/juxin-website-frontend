@@ -180,12 +180,9 @@ export default function About() {
             </div>
 
             <div className="mt-10 sm:mt-12 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {/* <ImageCard image="/images/about/factory_gate.jpg" title="Factory" />
-              <ImageCard image="/images/about/exhibition.jpg" title="INTERNATIONAL Exhibition" />
-              <ImageCard image="/images/about/container_loading.png" title="Container Loading" /> */}
-              <ImageCard image="https://img.juxin-manufacturing.com/website/factory_gate.jpg" title="Factory" />
-              <ImageCard image="https://img.juxin-manufacturing.com/website/exhibition.jpg" title="INTERNATIONAL Exhibition" />
-              <ImageCard image="https://img.juxin-manufacturing.com/website/container_loading.png" title="Container Loading" />
+              <ImageCard image="https://img.juxin-manufacturing.com/website/factory_gate.webp" title="Factory" />
+              <ImageCard image="https://img.juxin-manufacturing.com/website/exhibition.webp" title="INTERNATIONAL Exhibition" />
+              <ImageCard image="https://img.juxin-manufacturing.com/website/container_loading.webp" title="Container Loading" />
 
 
             </div>
