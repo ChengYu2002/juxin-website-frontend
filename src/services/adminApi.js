@@ -45,6 +45,13 @@ export async function adminFetch(url, options = {}) {
 
   const data = await res.json().catch(() => ({}))
 
+  // // ✅ 统一处理鉴权失败：自动跳登录页
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem('adminToken')
+    window.location.href = '/admin/login'
+    return
+  }
+
   if (!res.ok) {
     const err = new Error(
       data?.error ||

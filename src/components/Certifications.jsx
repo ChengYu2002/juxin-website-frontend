@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 
-const CERT_FILES = ['ISO_Envrioment.jpg', 'ISO_Quality.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg']
+const CERT_FILES = ['ISO_Envrioment.webp', 'ISO_Quality.webp', 'Health_Safe.webp', 'Social_Resp.webp', 'Workplace.webp', 'CE1.webp', 'CE2.webp']
 
 const certList = CERT_FILES.map((file) => ({
   id: file,
   title: file.split('.')[0],
-  src: `/images/certs/${file}`,
+  src: `https://img.juxin-manufacturing.com/website/${file}`,
 }))
 
 function getPageSize() {

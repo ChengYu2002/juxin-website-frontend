@@ -4,12 +4,12 @@ import { useMemo } from 'react'
 export default function PartnersMarquee() {
   const partners = useMemo(
     () => [
-      { name: 'ALDI', src: '/images/partners/aldi.svg', scale: 1.5 },
-      { name: 'Carrefour', src: '/images/partners/carrefour.svg', scale: 1.5 },
-      { name: 'Heineken', src: '/images/partners/heineken.svg', scale: 1 },
-      { name: 'DAISO', src: '/images/partners/daiso.svg', scale: 1 },
-      { name: 'Lee Kum Kee', src: '/images/partners/lee-kum-kee.svg', scale: 3 },
-      { name: 'Woolworth', src: '/images/partners/woolworth.svg', scale: 2.2 },
+      { name: 'ALDI', src: 'https://img.juxin-manufacturing.com/website/aldi.svg', scale: 1.5 },
+      { name: 'Carrefour', src: 'https://img.juxin-manufacturing.com/website/carrefour.svg', scale: 1.5 },
+      { name: 'Heineken', src: 'https://img.juxin-manufacturing.com/website/heineken.svg', scale: 1 },
+      { name: 'DAISO', src: 'https://img.juxin-manufacturing.com/website/daiso.svg', scale: 1 },
+      { name: 'Lee Kum Kee', src: 'https://img.juxin-manufacturing.com/website/lee-kum-kee.svg', scale: 3 },
+      { name: 'Woolworth', src: 'https://img.juxin-manufacturing.com/website/woolworth.svg', scale: 2.2 },
     ],
     []
   )

@@ -33,16 +33,16 @@ const CLIENT_TYPES = ['Retailers', 'Importers', 'Wholesalers']
 const CAPABILITY_MEDIA = [
   {
     title: 'Assembly Lines 2',
-    image: 'https://img.juxin-manufacturing.com/website/production_line2.png',
+    image: 'https://img.juxin-manufacturing.com/website/production_line2.webp',
   },
   {
     title: 'Assembly Lines 1',
-    image: 'https://img.juxin-manufacturing.com/website/production_line1.png',
+    image: 'https://img.juxin-manufacturing.com/website/production_line1.webp',
   },
   {
     title: 'Container Loading',
     desc: 'Container-level order execution with practical loading experience.',
-    image: 'https://img.juxin-manufacturing.com/website/container_loading.png',
+    image: 'https://img.juxin-manufacturing.com/website/container_loading.webp',
   },
 ]
 
@@ -180,12 +180,9 @@ export default function About() {
             </div>
 
             <div className="mt-10 sm:mt-12 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {/* <ImageCard image="/images/about/factory_gate.jpg" title="Factory" />
-              <ImageCard image="/images/about/exhibition.jpg" title="INTERNATIONAL Exhibition" />
-              <ImageCard image="/images/about/container_loading.png" title="Container Loading" /> */}
-              <ImageCard image="https://img.juxin-manufacturing.com/website/factory_gate.jpg" title="Factory" />
-              <ImageCard image="https://img.juxin-manufacturing.com/website/exhibition.jpg" title="INTERNATIONAL Exhibition" />
-              <ImageCard image="https://img.juxin-manufacturing.com/website/container_loading.png" title="Container Loading" />
+              <ImageCard image="https://img.juxin-manufacturing.com/website/factory_gate.webp" title="Factory" />
+              <ImageCard image="https://img.juxin-manufacturing.com/website/exhibition.webp" title="INTERNATIONAL Exhibition" />
+              <ImageCard image="https://img.juxin-manufacturing.com/website/container_loading.webp" title="Container Loading" />
 
 
             </div>

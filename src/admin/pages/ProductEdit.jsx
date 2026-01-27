@@ -66,7 +66,7 @@ export default function ProductEdit() {
           if (!cancelled) setProduct(normalizeProductData(p2))
         } catch (e2) {
           if (!cancelled) {
-            const msg = e2?.message ? `${e2.message} - 加载产品失败` : '加载产品失败'
+            const msg = e2?.message ? `${e2.message} - 加载产品失败 (请检查 产品id 是否正确 或 重新登录)` : '加载产品失败 (请检查 产品id 是否正确 或 重新登录)'
             setError(msg)
           }
         }
