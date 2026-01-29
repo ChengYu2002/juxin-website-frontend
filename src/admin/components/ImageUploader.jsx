@@ -115,10 +115,10 @@ export default function VariantImageUploader({
       setError('')
       setAction('delete')
 
-      if (isOssUploadedUrl(url)) {
+      // if (isOssUploadedUrl(url)) {
 
-        await deleteAdminImageByUrl(url)
-      }
+      //   await deleteAdminImageByUrl(url)
+      // }
 
       onChange?.(next)
     }
@@ -182,7 +182,7 @@ export default function VariantImageUploader({
             canPick ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed',
           ].join(' ')}
         >
-          {action === 'upload' ? '正在上传…' : '上传图片'}
+          {action === 'upload' ? '正在上传… 请耐心等待' : '上传图片'}
         </button>
 
         <div className="text-xs text-gray-500">

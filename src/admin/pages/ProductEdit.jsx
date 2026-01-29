@@ -257,6 +257,26 @@ export default function ProductEdit() {
     )
   }
 
+  // ✅ 最小改动：加载失败直接 return，不渲染表单
+  if (error) {
+    return (
+      <div className="p-6 space-y-4">
+        <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
+          {error}
+        </div>
+
+        <button
+          className="text-sm px-3 py-2 rounded border hover:bg-gray-50"
+          onClick={() => navigate('/admin/products')}
+          type="button"
+        >
+          返回产品列表
+        </button>
+      </div>
+    )
+  }
+
+
   return (
     <div className="p-6 space-y-6">
       {/* ===== Header ===== */}
@@ -294,11 +314,6 @@ export default function ProductEdit() {
       </div>
 
       {/* ===== Alerts ===== */}
-      {error ? (
-        <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
-          {error}
-        </div>
-      ) : null}
 
       {notice ? (
         <div className="border border-green-200 bg-green-50 text-green-700 p-3 rounded text-sm">
@@ -346,11 +361,6 @@ export default function ProductEdit() {
       </div>
 
       {/* ===== Alerts ===== */}
-      {error ? (
-        <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
-          {error}
-        </div>
-      ) : null}
 
       {notice ? (
         <div className="border border-green-200 bg-green-50 text-green-700 p-3 rounded text-sm">

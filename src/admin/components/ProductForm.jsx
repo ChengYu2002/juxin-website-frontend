@@ -263,6 +263,9 @@ export default function ProductForm({
             <div className="text-xs text-gray-500 mt-1">
               系统规则：默认使用第一个种类的第一张图片作为产品主图
             </div>
+            <div className="text-xs text-gray-500 mt-1">
+              注意：每个 Variant 的 Key 不能重复，否则保存时会报错
+            </div>
           </div>
 
           <button
