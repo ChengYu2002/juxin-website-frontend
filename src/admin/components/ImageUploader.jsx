@@ -1,6 +1,6 @@
 // src/admin/components/ImageUploader.jsx
 import { useState, useRef } from 'react'
-import { uploadAdminImages, deleteAdminImageByUrl } from '../../services/adminUploads.js'
+import { uploadAdminImages } from '../../services/adminUploads.js'
 
 const MAX_FILES_PER_PICK = 5
 const MAX_FILES = 10
@@ -94,14 +94,14 @@ export default function VariantImageUploader({
   }
 
   // 判断是否是已上传到 OSS 的图片 URL
-  function isOssUploadedUrl(url) {
-    try {
-      const u = new URL(url, window.location.origin)
-      return u.pathname.startsWith('/products/')
-    } catch {
-      return false
-    }
-  }
+  // function isOssUploadedUrl(url) {
+  //   try {
+  //     const u = new URL(url, window.location.origin)
+  //     return u.pathname.startsWith('/products/')
+  //   } catch {
+  //     return false
+  //   }
+  // }
 
   // 删除图片
   const removeAt = async(index) => {

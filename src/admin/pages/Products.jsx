@@ -291,7 +291,7 @@ export default function AdminProducts() {
           <ul className="space-y-2">
             {pagedProducts.map((p) => {
               const pid = getPid(p) //
-              const isDeleting = deletingId === pid 
+              const isDeleting = deletingId === pid
               return (
                 <li
                   key={pid}

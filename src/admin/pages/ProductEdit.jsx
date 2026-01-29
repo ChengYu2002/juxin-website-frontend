@@ -35,6 +35,7 @@ export default function ProductEdit() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false) // 保存中状态
   const [error, setError] = useState('')
+  const [loadError, setLoadError] = useState('')
   const [notice, setNotice] = useState('')
 
   const [product, setProduct] = useState(() => emptyProduct())
@@ -67,7 +68,7 @@ export default function ProductEdit() {
         } catch (e2) {
           if (!cancelled) {
             const msg = e2?.message ? `${e2.message} - 加载产品失败 (请检查 产品id 是否正确 或 重新登录)` : '加载产品失败 (请检查 产品id 是否正确 或 重新登录)'
-            setError(msg)
+            setLoadError(msg)
           }
         }
       } finally {
@@ -116,12 +117,33 @@ export default function ProductEdit() {
     }))
   }
 
-  const removeVariant = (index) => {
-    setProduct((prev) => {
-      const newVariants = Array.isArray(prev.variants) ? [...prev.variants] : []
-      newVariants.splice(index, 1) // 删除指定 index 的元素
-      return { ...prev, variants: newVariants }
-    })
+  const removeVariant = async (index) => {
+
+    const variant = product.variants?.[index]
+    if (!variant) return
+
+    try {
+
+      // ① 先删除 OSS 图片
+      // await adminFetch(
+      //   `/api/products/admin/${product.id}/variants/${variant.key}`,
+      //   { method: 'DELETE' }
+      // )
+
+      // ② 再从本地 state 删除 variant
+      setProduct((prev) => {
+        const newVariants = Array.isArray(prev.variants) ? [...prev.variants] : []
+        newVariants.splice(index, 1) // 删除指定 index 的元素
+        return { ...prev, variants: newVariants }
+      })
+
+
+    } catch(err){
+      alert('删除种类失败：' + err.message)
+    }
+
+
+
   }
 
   // ===== 辅助函数：保存前验证，拦截脏数据 =====
@@ -257,14 +279,12 @@ export default function ProductEdit() {
     )
   }
 
-  // ✅ 最小改动：加载失败直接 return，不渲染表单
-  if (error) {
+  if (loadError) {
     return (
       <div className="p-6 space-y-4">
         <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
-          {error}
+          {loadError}
         </div>
-
         <button
           className="text-sm px-3 py-2 rounded border hover:bg-gray-50"
           onClick={() => navigate('/admin/products')}
@@ -275,7 +295,6 @@ export default function ProductEdit() {
       </div>
     )
   }
-
 
   return (
     <div className="p-6 space-y-6">
@@ -314,6 +333,11 @@ export default function ProductEdit() {
       </div>
 
       {/* ===== Alerts ===== */}
+      {error ? (
+        <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
+          {error}
+        </div>
+      ) : null}
 
       {notice ? (
         <div className="border border-green-200 bg-green-50 text-green-700 p-3 rounded text-sm">
@@ -361,6 +385,11 @@ export default function ProductEdit() {
       </div>
 
       {/* ===== Alerts ===== */}
+      {error ? (
+        <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
+          {error}
+        </div>
+      ) : null}
 
       {notice ? (
         <div className="border border-green-200 bg-green-50 text-green-700 p-3 rounded text-sm">

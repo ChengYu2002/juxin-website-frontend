@@ -2,6 +2,9 @@
 import React from 'react'
 import VariantImageUploader from './ImageUploader'
 
+const ENABLE_MANUAL_URL =
+  import.meta.env.VITE_ENABLE_MANUAL_IMAGE_URL === 'true'
+
 export default function ProductForm({
   product,
   setField,
@@ -341,7 +344,7 @@ export default function ProductForm({
                   />
 
                   {/* ✅ 仍然保留 textarea：单独URL占一行（手工编辑） */}
-                  <div className="mt-2">
+                  {ENABLE_MANUAL_URL && <div className="mt-2">
                     <div className="text-sm text-gray-700 mb-1">图片 URL（单独URL占一行，可手动编辑）</div>
                     <textarea
                       className="w-full border rounded p-2 text-sm min-h-[110px] resize-y"
@@ -359,7 +362,7 @@ export default function ProductForm({
                     <div className="text-xs text-gray-500 mt-1">
                       图片数量: {Array.isArray(v.images) ? v.images.length : 0}
                     </div>
-                  </div>
+                  </div>}
                 </div>
 
               </div>

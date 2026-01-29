@@ -74,6 +74,8 @@ export default function ProductCreate() {
       newVariants.splice(index, 1) // 删除指定 index 的元素
       return { ...prev, variants: newVariants }
     })
+
+
   }
 
   // ===== 辅助函数：保存前验证，拦截脏数据 =====
