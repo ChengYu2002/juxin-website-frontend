@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
+import { deleteAdminImageByUrl } from '../../services/adminUploads'
 
 import ProductForm from '../components/ProductForm'
 import {
@@ -112,7 +113,12 @@ export default function ProductEdit() {
       ...prev,
       variants: [
         ...(Array.isArray(prev.variants) ? prev.variants : []),
-        { code: '', label: '', images: [] },
+        {
+          code: '',
+          label: '',
+          images: [],
+          _isNew: true,  // 前端临时标记：表示该 variant 尚未保存到后端，仅存在本地 state
+        },
       ],
     }))
   }
@@ -123,26 +129,39 @@ export default function ProductEdit() {
     if (!variant) return
 
     try {
+      // ✅ A) 未保存 variant：按 URL 清理 OSS（如果有），不删 DB
+      if (variant._isNew) {
+        const urls = Array.isArray(variant.images) ? variant.images : []
 
-      // ① 先删除 OSS 图片
-      // await adminFetch(
-      //   `/api/products/admin/${product.id}/variants/${variant.key}`,
-      //   { method: 'DELETE' }
-      // )
+        // 删除 OSS 图片
+        for (const url of urls) {
+          try {
+            await deleteAdminImageByUrl(url)
+          } catch (err) {
+            console.warn('delete temp image failed:', err?.message)
+          }
+        }
 
-      // ② 再从本地 state 删除 variant
+      } else {
+        if (!product?.id) throw new Error('Missing product.id')
+        if (!variant?.key) throw new Error('Missing variant.key')
+        // ✅ B) 已保存：交给后端删 DB + OSS
+        await adminFetch(
+          `/api/products/admin/${product.id}/variants/${variant.key}`,
+          { method: 'DELETE' }
+        )
+      }
+
+      // 删除前端 state 里的 variant
       setProduct((prev) => {
-        const newVariants = Array.isArray(prev.variants) ? [...prev.variants] : []
-        newVariants.splice(index, 1) // 删除指定 index 的元素
-        return { ...prev, variants: newVariants }
+        const next = [...(prev.variants || [])]
+        next.splice(index, 1)
+        return { ...prev, variants: next }
       })
-
 
     } catch(err){
       alert('删除种类失败：' + err.message)
     }
-
-
 
   }
 

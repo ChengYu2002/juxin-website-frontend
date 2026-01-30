@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
+import { deleteAdminImageByUrl } from '../../services/adminUploads'
 
 import ProductForm from '../components/ProductForm'
 import {
@@ -68,14 +69,33 @@ export default function ProductCreate() {
     }))
   }
 
-  const removeVariant = (index) => {
-    setProduct((prev) => {
-      const newVariants = Array.isArray(prev.variants) ? [...prev.variants] : []
-      newVariants.splice(index, 1) // 删除指定 index 的元素
-      return { ...prev, variants: newVariants }
-    })
+  // create 模式下删除 variant：只删本地 state，顺便删 OSS 图片，默认variant未保存后端 数据库
+  const removeVariant = async (index) => {
+    const variant = product.variants?.[index]
+    if (!variant) return
 
+    try {
+      // ✅ 只清理 OSS（如果有图片）
+      const urls = Array.isArray(variant.images) ? variant.images : []
 
+      for (const url of urls) {
+        try {
+          await deleteAdminImageByUrl(url)
+        } catch (err) {
+          console.warn('delete temp image failed:', err?.message)
+        }
+      }
+
+      // ✅ 只删本地 state（create 永远是本地）
+      setProduct((prev) => {
+        const next = [...(prev.variants || [])]
+        next.splice(index, 1)
+        return { ...prev, variants: next }
+      })
+    } catch (err) {
+      const msg = (err?.message && String(err.message)) || 'unknown error'
+      alert('删除种类失败：' + msg)
+    }
   }
 
   // ===== 辅助函数：保存前验证，拦截脏数据 =====
