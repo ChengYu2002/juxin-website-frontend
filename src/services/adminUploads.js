@@ -17,7 +17,7 @@ export async function uploadAdminImages(files) {
 }
 
 // oss删除单个图片
-export async function deleteAdminImageByUrl(imageUrl) {
+export async function deleteAdminImageOSSByUrl(imageUrl) {
   const url = String(imageUrl || '').trim()
   if (!url) throw new Error('Missing imageUrl')
 

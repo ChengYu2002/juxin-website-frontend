@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
-import { deleteAdminImageByUrl } from '../../services/adminUploads'
+import { deleteAdminImageOSSByUrl } from '../../services/adminUploads'
 
 import ProductForm from '../components/ProductForm'
 import {
@@ -136,7 +136,7 @@ export default function ProductEdit() {
         // 删除 OSS 图片
         for (const url of urls) {
           try {
-            await deleteAdminImageByUrl(url)
+            await deleteAdminImageOSSByUrl(url)
           } catch (err) {
             console.warn('delete temp image failed:', err?.message)
           }
@@ -164,6 +164,53 @@ export default function ProductEdit() {
     }
 
   }
+
+  // 单张图片删除
+  const handleVariantImageRemove = async (variantIndex, imageIndex) => {
+    // ① 从当前 product 拿 variant + url（别在 setProduct 里 await）
+    const variant = product.variants?.[variantIndex]
+    const url = variant?.images?.[imageIndex]
+    if (!variant || !url) return
+
+    // ② 先调用后端/OSS 删除（失败就不改 UI，避免假删除）
+    try {
+      if (variant._isNew || !variant.key) {
+        // 草稿 variant：只删 OSS（best-effort，但我建议失败就别改 UI）
+        await deleteAdminImageOSSByUrl(url)
+        console.log('[edit] delete oss image success')
+      } else {
+        // 已保存：走后端（DB pull + OSS best-effort，幂等）
+
+        await adminFetch(
+          `/api/products/admin/${product.id}/variants/${variant.key}/images?url=${encodeURIComponent(
+            url
+          )}`,
+          { method: 'DELETE' }
+        )
+        console.log('[edit] delete image via backend success')
+      }
+    } catch (e) {
+      console.warn('[edit] delete image failed:', e)
+      alert('删除图片失败：' + (e?.message || 'unknown'))
+      return
+    }
+
+    // ③ 删除成功后，再同步更新本地 state（纯同步）
+    setProduct((prev) => {
+      const variants = [...(prev.variants || [])]
+      const v = variants[variantIndex]
+      if (!v) return prev
+
+      const images = [...(v.images || [])]
+      if (!images[imageIndex]) return prev
+
+      images.splice(imageIndex, 1)
+      variants[variantIndex] = { ...v, images }
+      return { ...prev, variants }
+    })
+  }
+
+
 
   // ===== 辅助函数：保存前验证，拦截脏数据 =====
   const validateBeforeSave = () => {
@@ -376,6 +423,7 @@ export default function ProductEdit() {
         PROFIT_OPTIONS={PROFIT_OPTIONS}
         imagesArrayToTextarea={imagesArrayToTextarea}
         textareaToImagesArray={textareaToImagesArray}
+        onVariantImageRemove={handleVariantImageRemove}
       />
 
       {/* bottom action */}

@@ -20,6 +20,8 @@ export default function ProductForm({
   imagesArrayToTextarea,
   textareaToImagesArray,
   isCreateMode = false,
+
+  onVariantImageRemove,
 }) {
   return (
     <>
@@ -341,6 +343,8 @@ export default function ProductForm({
                     onChange={(nextImages) =>
                       updateVariantField(idx, { images: nextImages })
                     }
+                    onRemove={(imageIndex) => onVariantImageRemove?.(idx, imageIndex)}
+
                   />
 
                   {/* ✅ 仍然保留 textarea：单独URL占一行（手工编辑） */}
