@@ -170,14 +170,19 @@ export default function ProductEdit() {
     // ① 从当前 product 拿 variant + url（别在 setProduct 里 await）
     const variant = product.variants?.[variantIndex]
     const url = variant?.images?.[imageIndex]
-    if (!variant || !url) return
+    if (!variant || !url) {
+      return
+    }
+
 
     // ② 先调用后端/OSS 删除（失败就不改 UI，避免假删除）
     try {
-      if (variant._isNew || !variant.key) {
+      if (variant._isNew) {
         // 草稿 variant：只删 OSS（best-effort，但我建议失败就别改 UI）
+       
         await deleteAdminImageOSSByUrl(url)
         console.log('[edit] delete oss image success')
+      
       } else {
         // 已保存：走后端（DB pull + OSS best-effort，幂等）
 
@@ -191,8 +196,6 @@ export default function ProductEdit() {
       }
     } catch (e) {
       console.warn('[edit] delete image failed:', e)
-      alert('删除图片失败：' + (e?.message || 'unknown'))
-      return
     }
 
     // ③ 删除成功后，再同步更新本地 state（纯同步）
