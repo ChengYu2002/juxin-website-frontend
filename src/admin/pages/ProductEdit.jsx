@@ -179,10 +179,10 @@ export default function ProductEdit() {
     try {
       if (variant._isNew) {
         // 草稿 variant：只删 OSS（best-effort，但我建议失败就别改 UI）
-       
+
         await deleteAdminImageOSSByUrl(url)
         console.log('[edit] delete oss image success')
-      
+
       } else {
         // 已保存：走后端（DB pull + OSS best-effort，幂等）
 
