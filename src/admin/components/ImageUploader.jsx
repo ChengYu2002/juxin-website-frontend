@@ -1,6 +1,6 @@
 // src/admin/components/ImageUploader.jsx
 import { useState, useRef } from 'react'
-import { uploadAdminImages, deleteAdminImageByUrl } from '../../services/adminUploads.js'
+import { uploadAdminImages } from '../../services/adminUploads.js'
 
 const MAX_FILES_PER_PICK = 5
 const MAX_FILES = 10
@@ -28,6 +28,7 @@ function uniqKeepOrder(arr) {
 export default function VariantImageUploader({
   images = [],
   onChange,
+  onRemove,
   disabled = false, // 父组件可以控制禁用（比如整个表单提交中禁用所有输入）
 }) {
   // 上传中就要禁用按钮、改文案（Uploading...)
@@ -94,43 +95,49 @@ export default function VariantImageUploader({
   }
 
   // 判断是否是已上传到 OSS 的图片 URL
-  function isOssUploadedUrl(url) {
-    try {
-      const u = new URL(url, window.location.origin)
-      return u.pathname.startsWith('/products/')
-    } catch {
-      return false
-    }
+  // function isOssUploadedUrl(url) {
+  //   try {
+  //     const u = new URL(url, window.location.origin)
+  //     return u.pathname.startsWith('/products/')
+  //   } catch {
+  //     return false
+  //   }
+  // }
+
+  // ✅ 删除：只通知父级
+  const removeAt = (index) => {
+    if (!onRemove) return
+    onRemove(index)
   }
 
   // 删除图片
-  const removeAt = async(index) => {
-    const url = images[index]
-    if (!url) return
+  // const removeAt = async(index) => {
+  //   const url = images[index]
+  //   if (!url) return
 
-    const next = images.slice()
-    next.splice(index, 1)
+  //   const next = images.slice()
+  //   next.splice(index, 1)
 
-    try {
-      setError('')
-      setAction('delete')
+  //   try {
+  //     setError('')
+  //     setAction('delete')
 
-      if (isOssUploadedUrl(url)) {
+  //     // if (isOssUploadedUrl(url)) {
 
-        await deleteAdminImageByUrl(url)
-      }
+  //     //   await deleteAdminImageByUrl(url)
+  //     // }
 
-      onChange?.(next)
-    }
-    catch(err) {
-      const base = (err?.message && String(err.message).trim()) || ''
-      const msg = base ? `${base} - 删除图片失败` : '删除图片失败'
-      setError(msg)
+  //     onChange?.(next)
+  //   }
+  //   catch(err) {
+  //     const base = (err?.message && String(err.message).trim()) || ''
+  //     const msg = base ? `${base} - 删除图片失败` : '删除图片失败'
+  //     setError(msg)
 
-    } finally {
-      setAction(null)
-    }
-  }
+  //   } finally {
+  //     setAction(null)
+  //   }
+  // }
 
   const moveUp = (index) => {
     if (index <= 0) return
@@ -182,7 +189,7 @@ export default function VariantImageUploader({
             canPick ? 'cursor-pointer' : 'opacity-60 cursor-not-allowed',
           ].join(' ')}
         >
-          {action === 'upload' ? '正在上传…' : '上传图片'}
+          {action === 'upload' ? '正在上传… 请耐心等待' : '上传图片'}
         </button>
 
         <div className="text-xs text-gray-500">

@@ -16,12 +16,13 @@ export async function uploadAdminImages(files) {
   })
 }
 
-export async function deleteAdminImageByUrl(imageUrl) {
+// oss删除单个图片
+export async function deleteAdminImageOSSByUrl(imageUrl) {
   const url = String(imageUrl || '').trim()
   if (!url) throw new Error('Missing imageUrl')
 
-  const qs = `?url=${encodeURIComponent(url)}`
-  return adminFetch(`/api/admin/uploads/images${qs}`, {
-    method: 'DELETE',
-  })
+  return adminFetch(
+    `/api/admin/uploads/images?url=${encodeURIComponent(url)}`,
+    { method: 'DELETE' }
+  )
 }

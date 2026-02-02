@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
+import { deleteAdminImageOSSByUrl } from '../../services/adminUploads'
 
 import ProductForm from '../components/ProductForm'
 import {
@@ -68,11 +69,65 @@ export default function ProductCreate() {
     }))
   }
 
-  const removeVariant = (index) => {
+  // create 模式下删除 variant：只删本地 state，顺便删 OSS 图片，默认variant未保存后端 数据库
+  const removeVariant = async (index) => {
+    const variant = product.variants?.[index]
+    if (!variant) return
+
+    try {
+      // ✅ 只清理 OSS（如果有图片）
+      const urls = Array.isArray(variant.images) ? variant.images : []
+
+      for (const url of urls) {
+        try {
+          await deleteAdminImageOSSByUrl(url)
+        } catch (err) {
+          console.warn('delete temp image failed:', err?.message)
+        }
+      }
+
+      // ✅ 只删本地 state（create 永远是本地）
+      setProduct((prev) => {
+        const next = [...(prev.variants || [])]
+        next.splice(index, 1)
+        return { ...prev, variants: next }
+      })
+    } catch (err) {
+      const msg = (err?.message && String(err.message)) || 'unknown error'
+      alert('删除种类失败：' + msg)
+    }
+  }
+
+  // 删除 variant 图片（create 模式下只删 OSS 和本地 state）
+  const handleVariantImageRemove = async (variantIndex, imageIndex) => {
+    // 1) 先从当前 state 里拿到 url（别在 setProduct 里 await）
+    const variant = product.variants?.[variantIndex]
+    const url = variant?.images?.[imageIndex]
+    if (!url) return
+
+    // 2) 先删 OSS（best-effort）
+    try {
+      await deleteAdminImageOSSByUrl(url)
+    } catch (e) {
+      // 你要调试就打印出来，不然你会以为删了其实没删
+      console.warn('[delete oss] failed:', e)
+      // 你也可以选择：失败就不从 UI 移除
+      alert('删除图片失败：' + (e?.message || 'unknown error'))
+      return
+    }
+
+    // 3) 同步更新 state（纯同步！）
     setProduct((prev) => {
-      const newVariants = Array.isArray(prev.variants) ? [...prev.variants] : []
-      newVariants.splice(index, 1) // 删除指定 index 的元素
-      return { ...prev, variants: newVariants }
+      const variants = [...(prev.variants || [])]
+      const v = variants[variantIndex]
+      if (!v) return prev
+
+      const images = [...(v.images || [])]
+      if (!images[imageIndex]) return prev
+
+      images.splice(imageIndex, 1)
+      variants[variantIndex] = { ...v, images }
+      return { ...prev, variants }
     })
   }
 
@@ -253,6 +308,7 @@ export default function ProductCreate() {
         imagesArrayToTextarea={imagesArrayToTextarea}
         textareaToImagesArray={textareaToImagesArray}
         isCreateMode = {true}
+        onVariantImageRemove={handleVariantImageRemove}
       />
 
       {/* bottom action */}

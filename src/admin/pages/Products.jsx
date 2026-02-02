@@ -35,6 +35,9 @@ export default function AdminProducts() {
   const PAGE_SIZE = 20
   const [currentPage, setCurrentPage] = useState(1)
 
+  // 观测删除状态，防止重复删除
+  const [deletingId, setDeletingId] = useState(null)
+
   // ===== 拉取产品 =====
   const loadProducts = async () => {
     setLoading(true)
@@ -140,12 +143,20 @@ export default function AdminProducts() {
 
   // ===== 删除 =====
   const deleteProduct = async (product) => {
+    if (deletingId) {
+      alert('已有产品在删除中，请稍后再试')
+      return
+    }
+
     const ok = window.confirm(
       `确定要删除产品 "${product.name}" 吗？\n此操作不可撤销 !`
     )
     if (!ok) return
 
     const pid = getPid(product)
+
+    setDeletingId(pid)
+
     try {
       await adminFetch(`/api/products/admin/${pid}`, {
         method: 'DELETE',
@@ -154,6 +165,8 @@ export default function AdminProducts() {
       await loadProducts()
     } catch (err) {
       alert(err?.message ? `${err.message} \n 删除产品失败` : '删除产品失败')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -278,6 +291,7 @@ export default function AdminProducts() {
           <ul className="space-y-2">
             {pagedProducts.map((p) => {
               const pid = getPid(p) //
+              const isDeleting = deletingId === pid
               return (
                 <li
                   key={pid}
@@ -322,10 +336,17 @@ export default function AdminProducts() {
                       </button>
 
                       <button
+                        disabled={!!deletingId}
                         onClick={() => deleteProduct(p)}
-                        className="text-sm px-3 py-1.5 rounded-md border border-red-500 text-red-600 hover:bg-red-50"
+                        className={`text-sm px-3 py-1.5 rounded-md border border-red-500 transition ${
+                          isDeleting
+                            ? 'opacity-60 cursor-not-allowed text-red-600'
+                            : deletingId
+                              ? 'opacity-40 cursor-not-allowed text-gray-400'
+                              : 'text-red-600 hover:bg-red-50'
+                        }`}
                       >
-                        删除
+                        {isDeleting ? '删除中…' : '删除'}
                       </button>
                     </div>
                   </div>

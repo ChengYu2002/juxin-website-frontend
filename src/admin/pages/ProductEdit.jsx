@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
+import { deleteAdminImageOSSByUrl } from '../../services/adminUploads'
 
 import ProductForm from '../components/ProductForm'
 import {
@@ -35,6 +36,7 @@ export default function ProductEdit() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false) // 保存中状态
   const [error, setError] = useState('')
+  const [loadError, setLoadError] = useState('')
   const [notice, setNotice] = useState('')
 
   const [product, setProduct] = useState(() => emptyProduct())
@@ -67,7 +69,7 @@ export default function ProductEdit() {
         } catch (e2) {
           if (!cancelled) {
             const msg = e2?.message ? `${e2.message} - 加载产品失败 (请检查 产品id 是否正确 或 重新登录)` : '加载产品失败 (请检查 产品id 是否正确 或 重新登录)'
-            setError(msg)
+            setLoadError(msg)
           }
         }
       } finally {
@@ -111,18 +113,107 @@ export default function ProductEdit() {
       ...prev,
       variants: [
         ...(Array.isArray(prev.variants) ? prev.variants : []),
-        { code: '', label: '', images: [] },
+        {
+          code: '',
+          label: '',
+          images: [],
+          _isNew: true,  // 前端临时标记：表示该 variant 尚未保存到后端，仅存在本地 state
+        },
       ],
     }))
   }
 
-  const removeVariant = (index) => {
+  const removeVariant = async (index) => {
+
+    const variant = product.variants?.[index]
+    if (!variant) return
+
+    try {
+      // ✅ A) 未保存 variant：按 URL 清理 OSS（如果有），不删 DB
+      if (variant._isNew) {
+        const urls = Array.isArray(variant.images) ? variant.images : []
+
+        // 删除 OSS 图片
+        for (const url of urls) {
+          try {
+            await deleteAdminImageOSSByUrl(url)
+          } catch (err) {
+            console.warn('delete temp image failed:', err?.message)
+          }
+        }
+
+      } else {
+        if (!product?.id) throw new Error('Missing product.id')
+        if (!variant?.key) throw new Error('Missing variant.key')
+        // ✅ B) 已保存：交给后端删 DB + OSS
+        await adminFetch(
+          `/api/products/admin/${product.id}/variants/${variant.key}`,
+          { method: 'DELETE' }
+        )
+      }
+
+      // 删除前端 state 里的 variant
+      setProduct((prev) => {
+        const next = [...(prev.variants || [])]
+        next.splice(index, 1)
+        return { ...prev, variants: next }
+      })
+
+    } catch(err){
+      alert('删除种类失败：' + err.message)
+    }
+
+  }
+
+  // 单张图片删除
+  const handleVariantImageRemove = async (variantIndex, imageIndex) => {
+    // ① 从当前 product 拿 variant + url（别在 setProduct 里 await）
+    const variant = product.variants?.[variantIndex]
+    const url = variant?.images?.[imageIndex]
+    if (!variant || !url) {
+      return
+    }
+
+
+    // ② 先调用后端/OSS 删除（失败就不改 UI，避免假删除）
+    try {
+      if (variant._isNew) {
+        // 草稿 variant：只删 OSS（best-effort，但我建议失败就别改 UI）
+
+        await deleteAdminImageOSSByUrl(url)
+        console.log('[edit] delete oss image success')
+
+      } else {
+        // 已保存：走后端（DB pull + OSS best-effort，幂等）
+
+        await adminFetch(
+          `/api/products/admin/${product.id}/variants/${variant.key}/images?url=${encodeURIComponent(
+            url
+          )}`,
+          { method: 'DELETE' }
+        )
+        console.log('[edit] delete image via backend success')
+      }
+    } catch (e) {
+      console.warn('[edit] delete image failed:', e)
+    }
+
+    // ③ 删除成功后，再同步更新本地 state（纯同步）
     setProduct((prev) => {
-      const newVariants = Array.isArray(prev.variants) ? [...prev.variants] : []
-      newVariants.splice(index, 1) // 删除指定 index 的元素
-      return { ...prev, variants: newVariants }
+      const variants = [...(prev.variants || [])]
+      const v = variants[variantIndex]
+      if (!v) return prev
+
+      const images = [...(v.images || [])]
+      if (!images[imageIndex]) return prev
+
+      images.splice(imageIndex, 1)
+      variants[variantIndex] = { ...v, images }
+      return { ...prev, variants }
     })
   }
+
+
 
   // ===== 辅助函数：保存前验证，拦截脏数据 =====
   const validateBeforeSave = () => {
@@ -257,6 +348,23 @@ export default function ProductEdit() {
     )
   }
 
+  if (loadError) {
+    return (
+      <div className="p-6 space-y-4">
+        <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
+          {loadError}
+        </div>
+        <button
+          className="text-sm px-3 py-2 rounded border hover:bg-gray-50"
+          onClick={() => navigate('/admin/products')}
+          type="button"
+        >
+          返回产品列表
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* ===== Header ===== */}
@@ -318,6 +426,7 @@ export default function ProductEdit() {
         PROFIT_OPTIONS={PROFIT_OPTIONS}
         imagesArrayToTextarea={imagesArrayToTextarea}
         textareaToImagesArray={textareaToImagesArray}
+        onVariantImageRemove={handleVariantImageRemove}
       />
 
       {/* bottom action */}
