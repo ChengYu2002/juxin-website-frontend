@@ -39,14 +39,13 @@ export default function ProductCreate() {
   const [isDirty, setIsDirty] = useState(false)
 
   // firstRender, 避免初始加载时触发脏数据
-  const firstRender = useRef(true)
-  // 监听 product 变化，设置脏数据标记
+  
+   
+// ===== 脏数据保护逻辑 =====
+  const initialRef = useRef(JSON.stringify(emptyProduct()))
+
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false
-      return
-    }
-    setIsDirty(true)
+    setIsDirty(JSON.stringify(product) !== initialRef.current)
   }, [product])
 
   // 离开页面前的提示（脏数据保护）
