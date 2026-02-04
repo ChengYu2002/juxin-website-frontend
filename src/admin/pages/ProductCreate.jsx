@@ -1,5 +1,5 @@
 // src/admin/pages/ProductCreate.jsx
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
 import { deleteAdminImageOSSByUrl } from '../../services/adminUploads'
@@ -34,6 +34,33 @@ export default function ProductCreate() {
 
   // Create：默认空产品
   const [product, setProduct] = useState(() => emptyProduct())
+
+  // 是否有修改（脏数据）
+  const [isDirty, setIsDirty] = useState(false)
+
+  // firstRender, 避免初始加载时触发脏数据
+  const firstRender = useRef(true)
+  // 监听 product 变化，设置脏数据标记
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    setIsDirty(true)
+  }, [product])
+
+  // 离开页面前的提示（脏数据保护）
+  useEffect(() => {
+    const handler = (e) => {
+      if (!isDirty) return
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [isDirty])
+
+
 
   // ===== 辅助函数：更新字段 =====
   const setField = (key, value) => {
@@ -224,6 +251,9 @@ export default function ProductCreate() {
 
       setNotice('产品创建成功 🎉')
 
+      // 脏数据清零
+      setIsDirty(false)
+
       // 成功后有三种策略（先默认最常用：回列表）
       navigate('/admin/products')
     } catch (e) {
@@ -250,6 +280,12 @@ export default function ProductCreate() {
     }
   }
 
+  // 返回列表的辅助函数（带脏数据保护）
+  const goBackToList = () => {
+    if (isDirty && !window.confirm('当前有未保存修改，确定离开吗？')) return
+    navigate('/admin/products')
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* ===== Header ===== */}
@@ -261,7 +297,7 @@ export default function ProductCreate() {
         <div className="flex gap-2">
           <button
             className="text-sm px-3 py-2 rounded border hover:bg-gray-50"
-            onClick={() => navigate('/admin/products')}
+            onClick={goBackToList}
             type="button"
           >
 							返回产品列表
@@ -315,7 +351,7 @@ export default function ProductCreate() {
       <div className="flex gap-2">
         <button
           className="text-sm px-3 py-2 rounded border hover:bg-gray-50"
-          onClick={() => navigate('/admin/products')}
+          onClick={goBackToList}
           type="button"
         >
 						返回产品列表
