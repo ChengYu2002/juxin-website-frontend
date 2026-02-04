@@ -87,15 +87,23 @@ export default function ProductEdit() {
     } // 清理函数，组件卸载时设置 cancelled 为 true
   }, [productId])
 
-  // firstRender, 避免初始加载时触发脏数据
-  const firstRender = useRef(true)
-  // 监听 product 变化，设置脏数据标记
+
+  // ===== 脏数据保护逻辑 =====
+  const initialRef = useRef(null)
+  // 把初始快照存下来
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false
-      return
+    // 在 load 成功、setProduct 之后，把快照定下来
+    if (!loading && !loadError && initialRef.current == null) {
+      // 把当前 product 的 JSON 字符串存为初始快照
+      initialRef.current = JSON.stringify(product)
+      setIsDirty(false)
     }
-    setIsDirty(true)
+  }, [loading, loadError, product])
+  
+  useEffect(() => {
+    if (!initialRef.current) return
+    setIsDirty(JSON.stringify(product) !== initialRef.current)
+    // 比较当前 product 和初始快照的 JSON 字符串是否相同
   }, [product])
 
   // 离开页面前的提示（脏数据保护）
