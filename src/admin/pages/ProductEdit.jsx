@@ -1,5 +1,5 @@
 // src/admin/pages/ProductEdit.jsx
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef} from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
 import { deleteAdminImageOSSByUrl } from '../../services/adminUploads'
@@ -45,6 +45,9 @@ export default function ProductEdit() {
     return `${product?.name ? `编辑: ${product.name}` : '编辑产品'} —— 产品id: ${productId}`
   }, [product?.name, productId] )
 
+  // 是否有修改（脏数据）
+  const [isDirty, setIsDirty] = useState(false)
+
   // ===== 加载，拉取产品数据 =====
   useEffect(() => {
     let cancelled = false // 防止用户快速切换页面导致的状态更新问题
@@ -83,6 +86,29 @@ export default function ProductEdit() {
       cancelled = true
     } // 清理函数，组件卸载时设置 cancelled 为 true
   }, [productId])
+
+  // firstRender, 避免初始加载时触发脏数据
+  const firstRender = useRef(true)
+  // 监听 product 变化，设置脏数据标记
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return
+    }
+    setIsDirty(true)
+  }, [product])
+
+  // 离开页面前的提示（脏数据保护）
+  useEffect(() => {
+    const handler = (e) => {
+      if (!isDirty) return
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [isDirty])
+
 
   // ===== 辅助函数：更新字段 =====
   const setField = (key, value) => {
@@ -339,6 +365,12 @@ export default function ProductEdit() {
     }
   }
 
+  // 返回列表的辅助函数（带脏数据保护）
+  const goBackToList = () => {
+    if (isDirty && !window.confirm('当前有未保存修改，确定离开吗？')) return
+    navigate('/admin/products')
+  }
+
   // ===== 注意：渲染必须在组件顶层 return，不要写进 onSave 里！=====
   if (loading) {
     return (
@@ -380,7 +412,7 @@ export default function ProductEdit() {
         <div className="flex gap-2">
           <button
             className="text-sm px-3 py-2 rounded border hover:bg-gray-50"
-            onClick={() => navigate('/admin/products')}
+            onClick={goBackToList}
             type="button"
           >
             返回产品列表
@@ -433,7 +465,7 @@ export default function ProductEdit() {
       <div className="flex gap-2">
         <button
           className="text-sm px-3 py-2 rounded border hover:bg-gray-50"
-          onClick={() => navigate('/admin/products')}
+          onClick={goBackToList}
           type="button"
         >
           返回产品列表
