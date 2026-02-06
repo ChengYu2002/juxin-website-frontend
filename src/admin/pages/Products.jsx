@@ -4,6 +4,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { adminFetch } from '../../services/adminApi'
 import { useNavigate } from 'react-router-dom'
 
+// 全局 busy 遮罩 + 云任务队列
+import BusyOverlay from '../components/BusyOverlay'
+import useCloudBusyQueue from '../hooks/useCloudBusyQueue'
+
 // 筛选语义映射
 const FILTER_MAP = {
   'create-time': { sort: 'default' }, // sortOrder + createAt
@@ -24,6 +28,11 @@ export default function AdminProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  // ⭐ 统一管理云端任务（串行 + BusyOverlay）
+  const { busy, runCloudTask, isBusy } = useCloudBusyQueue({
+    onError: (msg) => setError(msg),
+  })
 
   // 筛选条件
   const [filter, setFilter] = useState('create-time')
@@ -56,8 +65,11 @@ export default function AdminProducts() {
   }
 
   useEffect(() => {
-    loadProducts()
-  }, [])
+    // ⭐ 初次加载也用 runCloudTask：避免用户刷新/切页时乱点
+    runCloudTask('加载产品列表中，请耐心等候', async () => {
+      await loadProducts()
+    }).catch(() => {}) // runCloudTask 会 throw，这里吃掉，避免 React 报未处理
+  }, []) // eslint-disable-line
 
   // ===== 过滤 + 排序（前端本地）=====
   // useMemo 在render期间缓存计算结果，依赖 products, filter 和 search改变时重新计算
@@ -126,25 +138,31 @@ export default function AdminProducts() {
 
   // ===== 上下架 toggle =====
   const toggleActive = async (product) => {
+    if (isBusy) return // ⭐ 全局忙就不让点（也可以不写，因为 overlay 会挡住）
+
     const next = !product.isActive
     const pid = getPid(product)
 
     try {
-      await adminFetch(`/api/products/admin/${pid}`, {
-        method: 'PUT',
-        body: { isActive: next },
-      })
+      await runCloudTask(next ? '上架中，请耐心等候' : '下架中，请耐心等候', async () => {
+        await adminFetch(`/api/products/admin/${pid}`, {
+          method: 'PUT',
+          body: { isActive: next },
+        })
 
-      await loadProducts()
+        await loadProducts()
+      })
     } catch (err) {
-      alert(err?.message ? `${err.message} - 更新产品状态失败` : '更新产品状态失败')
+      // 这里不需要 alert：runCloudTask 已经 onError(setError) 了
+      // 但你如果习惯弹窗也可以加 alert
+      console.log(err)
     }
   }
 
   // ===== 删除 =====
   const deleteProduct = async (product) => {
-    if (deletingId) {
-      alert('已有产品在删除中，请稍后再试')
+    if (isBusy || deletingId) {
+      alert('已有操作在进行中，请稍后再试')
       return
     }
 
@@ -154,17 +172,19 @@ export default function AdminProducts() {
     if (!ok) return
 
     const pid = getPid(product)
-
     setDeletingId(pid)
 
     try {
-      await adminFetch(`/api/products/admin/${pid}`, {
-        method: 'DELETE',
-      })
+      await runCloudTask('删除产品中，请耐心等候 ☁️', async () => {
+        await adminFetch(`/api/products/admin/${pid}`, {
+          method: 'DELETE',
+        })
 
-      await loadProducts()
+        await loadProducts()
+      })
     } catch (err) {
-      alert(err?.message ? `${err.message} \n 删除产品失败` : '删除产品失败')
+      console.log(err)
+      // runCloudTask 已经 onError(setError) 了
     } finally {
       setDeletingId(null)
     }
@@ -172,6 +192,8 @@ export default function AdminProducts() {
 
   return (
     <>
+      <BusyOverlay open={busy.open} text={busy.text || '云端操作中，请耐心等候 ☁️'} />
+
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold">Products 产品管理</h2>
 

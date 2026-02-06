@@ -7,7 +7,6 @@ const MAX_FILES = 10
 const MAX_SIZE_MB = 10
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
 
-
 function uniqKeepOrder(arr) {
   const seen = new Set()
   const out = []
@@ -30,6 +29,11 @@ export default function VariantImageUploader({
   onChange,
   onRemove,
   disabled = false, // 父组件可以控制禁用（比如整个表单提交中禁用所有输入）
+
+  // ⭐ 新增：可选，父组件传入（来自 useCloudBusyQueue）
+  // 目的：用全局 BusyOverlay + 串行队列包住上传
+  runCloudTask,
+  cloudText = '云端上传图片中，请耐心等候 ☁️',
 }) {
   // 上传中就要禁用按钮、改文案（Uploading...)
   const [action, setAction] = useState(null)
@@ -38,13 +42,12 @@ export default function VariantImageUploader({
   const [error, setError] = useState('')
   const fileRef = useRef(null) // ✅ 更稳：用 ref 手动触发文件选择框
 
-
   const handlePick = async (e) => {
     // 确保事件处理只针对文件输入
 
     setError('')
     const files = Array.from(e.target.files || []) //Array.from: 将类数组对象转换为真正的数组
-    e.target.value = ''            // 重置输入，允许选同一文件多次
+    e.target.value = '' // 重置输入，允许选同一文件多次
     if (files.length === 0) return // 用户取消选择，没有文件
 
     // ✅ 单次选择数量限制（与后端 array('images', 10) 一致）
@@ -71,9 +74,8 @@ export default function VariantImageUploader({
       }
     }
 
-    // 上传
-    try {
-      setAction('upload') // 开始上传，进入 busy 状态
+    // ⭐ 把真正上传逻辑抽成函数（方便给 runCloudTask 包装）
+    const doUpload = async () => {
       const res = await uploadAdminImages(files)
 
       const newUrls = (res.items || [])
@@ -83,15 +85,25 @@ export default function VariantImageUploader({
       const allImages = uniqKeepOrder([...(images || []), ...newUrls])
 
       onChange?.(allImages)
+    }
 
-    } catch(err) {
+    // 上传
+    try {
+      // ⭐⭐⭐ 新增：如果父组件传了 runCloudTask → 用全局 BusyOverlay（串行队列）
+      if (typeof runCloudTask === 'function') {
+        await runCloudTask(cloudText, doUpload)
+      } else {
+        // ✅ fallback：保持你原来的本地 busy 逻辑（完全兼容）
+        setAction('upload') // 开始上传，进入 busy 状态
+        await doUpload()
+      }
+    } catch (err) {
       const base = (err?.message && String(err.message).trim()) || ''
       const msg = base ? `${base} - 上传图片失败` : '上传图片失败'
       setError(msg)
     } finally {
       setAction(null)
     }
-
   }
 
   // 判断是否是已上传到 OSS 的图片 URL
@@ -114,26 +126,26 @@ export default function VariantImageUploader({
   // const removeAt = async(index) => {
   //   const url = images[index]
   //   if (!url) return
-
+  //
   //   const next = images.slice()
   //   next.splice(index, 1)
-
+  //
   //   try {
   //     setError('')
   //     setAction('delete')
-
+  //
   //     // if (isOssUploadedUrl(url)) {
-
+  //
   //     //   await deleteAdminImageByUrl(url)
   //     // }
-
+  //
   //     onChange?.(next)
   //   }
   //   catch(err) {
   //     const base = (err?.message && String(err.message).trim()) || ''
   //     const msg = base ? `${base} - 删除图片失败` : '删除图片失败'
   //     setError(msg)
-
+  //
   //   } finally {
   //     setAction(null)
   //   }
@@ -161,13 +173,14 @@ export default function VariantImageUploader({
     onChange?.(next)
   }
 
+  // ✅ 仍然沿用你原来的禁用逻辑
+  // 注意：如果父组件有全屏 BusyOverlay，UI 会被挡住；这里的禁用更多是“语义正确”
   const canPick = !disabled && !busy && images.length < MAX_FILES
   const canEdit = !disabled && !busy
 
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 flex-wrap">
-
         <input
           ref={fileRef}
           type="file"
@@ -216,7 +229,6 @@ export default function VariantImageUploader({
               </div>
 
               <div className="border-t p-2 flex items-center justify-between gap-2">
-
                 <div className="min-w-0">
                   {idx === 0 ? (
                     <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">
@@ -248,7 +260,9 @@ export default function VariantImageUploader({
                     disabled={!canEdit || idx === 0}
                     className={[
                       'rounded-md px-2 py-1 text-[11px] border border-gray-200 text-gray-700',
-                      (!canEdit || idx === 0) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-50',
+                      (!canEdit || idx === 0)
+                        ? 'opacity-40 cursor-not-allowed'
+                        : 'hover:bg-gray-50',
                     ].join(' ')}
                   >
                     上移

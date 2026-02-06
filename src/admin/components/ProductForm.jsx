@@ -22,6 +22,7 @@ export default function ProductForm({
   isCreateMode = false,
 
   onVariantImageRemove,
+  runCloudTask,
 }) {
   return (
     <>
@@ -344,6 +345,7 @@ export default function ProductForm({
                       updateVariantField(idx, { images: nextImages })
                     }
                     onRemove={(imageIndex) => onVariantImageRemove?.(idx, imageIndex)}
+                    runCloudTask={runCloudTask}
 
                   />
 
