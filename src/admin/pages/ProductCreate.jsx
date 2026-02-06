@@ -4,7 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import { adminFetch } from '../../services/adminApi'
 import { deleteAdminImageOSSByUrl } from '../../services/adminUploads'
 
+
 import ProductForm from '../components/ProductForm'
+import BusyOverlay from '../components/BusyOverlay'
+
+import useCloudBusyQueue from '../hooks/useCloudBusyQueue'
+
 import {
   emptyProduct,
   imagesArrayToTextarea,
@@ -39,9 +44,9 @@ export default function ProductCreate() {
   const [isDirty, setIsDirty] = useState(false)
 
   // firstRender, 避免初始加载时触发脏数据
-  
-   
-// ===== 脏数据保护逻辑 =====
+
+
+  // ===== 脏数据保护逻辑 =====
   const initialRef = useRef(JSON.stringify(emptyProduct()))
 
   useEffect(() => {
@@ -59,6 +64,10 @@ export default function ProductCreate() {
     return () => window.removeEventListener('beforeunload', handler)
   }, [isDirty])
 
+  // 云端忙碌队列 Hook
+  const { busy, _isBusy, runCloudTask } = useCloudBusyQueue({
+    onError: (msg) => setError(msg),
+  })
 
 
   // ===== 辅助函数：更新字段 =====
@@ -100,60 +109,62 @@ export default function ProductCreate() {
     const variant = product.variants?.[index]
     if (!variant) return
 
-    try {
-      // ✅ 只清理 OSS（如果有图片）
-      const urls = Array.isArray(variant.images) ? variant.images : []
+    const urls = Array.isArray(variant.images) ? variant.images : []
 
+    // 1) ✅ UI 先删（永远成功）
+    setProduct((prev) => {
+      const next = [...(prev.variants || [])]
+      next.splice(index, 1)
+      return { ...prev, variants: next }
+    })
+
+    // 2) ✅ OSS 后台尽力删：失败不阻塞 UI
+    await runCloudTask('云端删除该变体图片中，请耐心等候 ☁️', async () => {
+      const failed = []
       for (const url of urls) {
         try {
           await deleteAdminImageOSSByUrl(url)
-        } catch (err) {
-          console.warn('delete temp image failed:', err?.message)
+        } catch (e) {
+          console.warn('[oss delete] failed:', url, e)
+          failed.push(url)
         }
       }
 
-      // ✅ 只删本地 state（create 永远是本地）
-      setProduct((prev) => {
-        const next = [...(prev.variants || [])]
-        next.splice(index, 1)
-        return { ...prev, variants: next }
-      })
-    } catch (err) {
-      const msg = (err?.message && String(err.message)) || 'unknown error'
-      alert('删除种类失败：' + msg)
-    }
+      // 可选：给用户一个“部分失败”的提示（不要 throw，不然又卡住 UI）
+      if (failed.length > 0) {
+        // 你可以用 setError / setNotice / toast
+        setError(`已从界面移除，但有 ${failed.length} 张图片云端删除失败，稍后会自动清理`)
+        console.warn('[oss delete] failed urls:', failed)
+      }
+    })
   }
 
   // 删除 variant 图片（create 模式下只删 OSS 和本地 state）
   const handleVariantImageRemove = async (variantIndex, imageIndex) => {
-    // 1) 先从当前 state 里拿到 url（别在 setProduct 里 await）
-    const variant = product.variants?.[variantIndex]
-    const url = variant?.images?.[imageIndex]
+    const url = product.variants?.[variantIndex]?.images?.[imageIndex]
     if (!url) return
 
-    // 2) 先删 OSS（best-effort）
-    try {
-      await deleteAdminImageOSSByUrl(url)
-    } catch (e) {
-      // 你要调试就打印出来，不然你会以为删了其实没删
-      console.warn('[delete oss] failed:', e)
-      // 你也可以选择：失败就不从 UI 移除
-      alert('删除图片失败：' + (e?.message || 'unknown error'))
-      return
-    }
-
-    // 3) 同步更新 state（纯同步！）
-    setProduct((prev) => {
+    // 1) ✅ UI 先删（用户永远感觉“删掉了”）
+    setProduct(prev => {
       const variants = [...(prev.variants || [])]
       const v = variants[variantIndex]
       if (!v) return prev
-
       const images = [...(v.images || [])]
-      if (!images[imageIndex]) return prev
-
       images.splice(imageIndex, 1)
       variants[variantIndex] = { ...v, images }
       return { ...prev, variants }
+    })
+
+    // 2) ✅ OSS best-effort：失败也不影响 UI
+    await runCloudTask('云端删除图片中，请耐心等候 ☁️', async () => {
+      try {
+        await deleteAdminImageOSSByUrl(url)
+      } catch (e) {
+        // 失败就记日志 + 顶部提示（可选）
+        console.warn('[oss delete] failed, leave orphan:', url, e)
+        // 可选：你想让用户知道就 setError，但不要挡住 UI
+        setError('图片云端删除失败，已从界面移除，稍后会自动清理')
+      }
     })
   }
 
@@ -287,6 +298,7 @@ export default function ProductCreate() {
 
   return (
     <div className="p-6 space-y-6">
+      <BusyOverlay open={busy.open} text={busy.text} />
       {/* ===== Header ===== */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -344,6 +356,7 @@ export default function ProductCreate() {
         textareaToImagesArray={textareaToImagesArray}
         isCreateMode = {true}
         onVariantImageRemove={handleVariantImageRemove}
+        runCloudTask={runCloudTask}
       />
 
       {/* bottom action */}
@@ -368,7 +381,20 @@ export default function ProductCreate() {
         >
           {saving ? '创建中...' : '创建产品'}
         </button>
+
       </div>
+      {/* ===== Alerts ===== */}
+      {error ? (
+        <div className="border border-red-200 bg-red-50 text-red-700 p-3 rounded text-sm">
+          {error}
+        </div>
+      ) : null}
+
+      {notice ? (
+        <div className="border border-green-200 bg-green-50 text-green-700 p-3 rounded text-sm">
+          {notice}
+        </div>
+      ) : null}
     </div>
   )
 }
