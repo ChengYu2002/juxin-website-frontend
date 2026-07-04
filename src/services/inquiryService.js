@@ -1,13 +1,14 @@
 // src/services/inquiryService.js
 // const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
-export async function submitInquiry({ name, email, message }) {
+export async function submitInquiry({ name, email, message, company = '' }) {
   const res = await fetch('/api/inquiries', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ name, email, message })
+    // company 是蜜罐字段：正常用户为空，机器人常填，后端据此拦截
+    body: JSON.stringify({ name, email, message, company })
   })
 
   if (!res.ok) {

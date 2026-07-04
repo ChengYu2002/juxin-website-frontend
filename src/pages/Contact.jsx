@@ -29,6 +29,9 @@ export default function Contact() {
   // useRef 的 .current 改变，不会触发组件重新渲染；
   const prefillAppliedRef = useRef(false)
 
+  // 蜜罐字段引用：正常用户永远为空，机器人常会填
+  const companyRef = useRef(null)
+
   // 记录是否提交过
   const [showValidation, setShowValidation] = useState(false)
 
@@ -154,7 +157,8 @@ export default function Contact() {
     setStatus('submitting')
 
     // 取当前值（避免 reset 后 values 变化）
-    const payload = { ...values }
+    // ✅ 带上蜜罐字段 company（后端据此拦截机器人）
+    const payload = { ...values, company: companyRef.current?.value ?? '' }
 
     try {
       // v1.5：fetch/axios 提交到后端 API
@@ -205,7 +209,14 @@ export default function Contact() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 蜜罐字段：company, 人看不到，机器人常会填 */}
-        <input name="company" className="hidden" tabIndex={-1} autoComplete="off" />
+        <input
+          ref={companyRef}
+          name="company"
+          className="hidden"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+        />
 
         {/* input: name */}
         <div>
