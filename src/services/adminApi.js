@@ -1,5 +1,5 @@
 // src/services/adminApi.js
-import { getAdminToken } from '../admin/auth.js'
+import { getAdminToken, clearAdminToken } from '../admin/auth.js'
 
 export async function adminFetch(url, options = {}) {
   const token = getAdminToken()
@@ -47,7 +47,7 @@ export async function adminFetch(url, options = {}) {
 
   // // ✅ 统一处理鉴权失败：自动跳登录页
   if (res.status === 401 || res.status === 403) {
-    localStorage.removeItem('adminToken')
+    clearAdminToken()
     window.location.href = '/admin/login'
     return
   }
