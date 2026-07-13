@@ -8,7 +8,8 @@ import ProductActions from '../components/ProductActions'
 import ProductSpecs from '../components/ProductSpecs'
 import ProductRecommendations from '../components/ProductRecommendations'
 
-import usePageTitle from '../hooks/usePageTitle'
+import Seo from '../components/Seo'
+import JsonLd from '../components/JsonLd'
 
 function ProductDetail({ product }) {
   // 初始化状态，选择第一个变体和第一张图片
@@ -20,6 +21,13 @@ function ProductDetail({ product }) {
   // 获取当前选中的变体
   const selectedVariant = product?.variants?.[selectedVariantIndex]
 
+  // SEO 用:主图 + 去重图片列表
+  const mainImage = product?.variants?.[0]?.images?.[0]
+  const productImages = (product?.variants || [])
+    .flatMap((v) => v?.images || [])
+    .filter(Boolean)
+    .slice(0, 6)
+
   // 初始化: 打开页面永远滚动到顶部
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
@@ -27,6 +35,25 @@ function ProductDetail({ product }) {
 
   return (
     <main className="mx-auto max-w-4xl px-5 py-8">
+      <Seo
+        title={product.name}
+        description={`${product.name} — ${product.category} by Juxin Manufacturing. MOQ ${product.moq} pcs. Specifications, export packing and OEM/ODM options for wholesale buyers.`}
+        path={`/products/${String(product.id).toLowerCase()}`}
+        image={mainImage}
+        type="product"
+      />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.name,
+          sku: product.id,
+          category: product.category,
+          ...(productImages.length ? { image: productImages } : {}),
+          description: `${product.name} — ${product.category}, MOQ ${product.moq} pcs, manufactured by Juxin Manufacturing.`,
+          brand: { '@type': 'Brand', name: 'Juxin' },
+        }}
+      />
       {/* 上半部分：两栏 */}
       <div className="grid gap-10 lg:grid-cols-5">
         {/* 左：图片区 */}
@@ -81,13 +108,6 @@ export default function Product() {
   // const [allProducts, setAllProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
-  // 设置页面标题
-  usePageTitle(
-    product
-      ? `${product.name} - Juxin`
-      : 'Product - Juxin'
-  )
 
   // 反正产品抖动
   useEffect(() => {

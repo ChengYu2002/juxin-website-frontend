@@ -1,7 +1,10 @@
 // src/pages/NotFound.jsx
+import Seo from '../components/Seo'
+
 export default function NotFound() {
   return (
     <main className="flex min-h-[70vh] items-center justify-center px-6">
+      <Seo title="Page Not Found" noindex />
       <div className="max-w-md text-center">
         <p className="mb-2 text-sm uppercase tracking-widest text-gray-400">
           Error 404
