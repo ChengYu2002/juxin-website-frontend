@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom'
 import PartnersMarquee from '../components/PartnersMarquee'
 import Certifications from '../components/Certifications'
-import usePageTitle from '../hooks/usePageTitle'
+import Seo from '../components/Seo'
 
 const COMPANY = {
   name: 'JUXIN',
@@ -132,11 +132,13 @@ function ImageCard({ title, image }) {
 }
 
 export default function About() {
-  // 设置页面标题
-  usePageTitle('About Us - Juxin')
-
   return (
     <main className="bg-white">
+      <Seo
+        title="About Us"
+        description="Juxin Manufacturing is a China-based factory-direct manufacturer of shopping trolleys, utility carts and camping wagons, exporting to 60+ countries with OEM/ODM and container-level production."
+        path="/about"
+      />
       {/* HERO — German industrial vibe */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-zinc-950">
         <div className="pointer-events-none absolute inset-0 opacity-[0.10]">

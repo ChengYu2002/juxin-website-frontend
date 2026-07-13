@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import ProductCard from '../components/ProductCard'
 import { useSearchParams } from 'react-router-dom'
-import usePageTitle from '../hooks/usePageTitle'
+import Seo from '../components/Seo'
 
 export default function Products() {
   const [searchParams] = useSearchParams()
@@ -17,9 +17,6 @@ export default function Products() {
       .replace(/-/g, ' ')
       .replace(/\b\w/g, c => c.toUpperCase())
     : ''
-
-  // 设置页面标题
-  usePageTitle(category ? `Products: ${titleCategory} - Juxin` : 'All Products - Juxin')
 
   // pagination
   const PAGE_SIZE = 12
@@ -94,6 +91,15 @@ export default function Products() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
+      <Seo
+        title={category ? `${titleCategory}` : 'All Products'}
+        description={
+          category
+            ? `Browse Juxin ${titleCategory.toLowerCase()} — specifications, MOQ and export packing for wholesale and OEM/ODM buyers.`
+            : 'Browse the full Juxin product range — shopping trolleys, utility carts, camping wagons and outdoor furniture for wholesale and OEM/ODM buyers.'
+        }
+        path={category ? `/products?category=${category}` : '/products'}
+      />
       <h1 className="mb-6 text-2xl font-bold">
         {category ? `Products / ${titleCategory}` : 'All Products'}
       </h1>

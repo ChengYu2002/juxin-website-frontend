@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useField } from '../hooks/useField'
 import { submitInquiry } from '../services/inquiryService'
-import usePageTitle from '../hooks/usePageTitle'
+import Seo from '../components/Seo'
 
 const COMPANY_EMAIL = 'sale01@cn-jason.net'
 const SUBJECT_PREFIX = 'Inquiry from Juxin Website'
@@ -16,8 +16,6 @@ function isValidEmail(v) {
 //string.trim(): 去除字符串「开头和结尾」的空白字符
 
 export default function Contact() {
-  // 设置页面标题
-  usePageTitle('Contact Us - Juxin')
 
   const name = useField('text')
   const email = useField('email')
@@ -192,6 +190,11 @@ export default function Contact() {
 
   return (
     <main className="mx-auto max-w-xl p-6">
+      <Seo
+        title="Contact Us"
+        description="Contact Juxin Manufacturing for wholesale and OEM/ODM inquiries — shopping trolleys, utility carts, camping wagons and outdoor furniture. Get a quote on MOQ, packing and shipping."
+        path="/contact"
+      />
       <h1 className="mb-2 text-2xl font-semibold">Contact Us</h1>
       <p className="mb-6 text-sm text-gray-600">Send us an inquiry.</p>
 
